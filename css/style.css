@@ -1,0 +1,123 @@
+* {
+  margin: 0;
+  padding: 0;
+  }
+
+body {
+  font-family: "Palatino Linotype", "Book Antiqua", "Palatino", serif;
+  height: 100%;
+}
+
+.container {
+  display: flex;
+  overflow: auto;
+  flex: none;
+  /* width: 100%; */
+  flex-flow: row nowrap;
+  scroll-snap-type: x mandatory;
+  place-items: center center;
+  /* justify-content: space-evenly; */
+  /* height: 100%; */
+}
+
+/* Flex setting */
+
+.card {
+  scroll-snap-align: center;
+  flex: none;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.cardcard {
+  width: 85%;
+  height: 75%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid black;
+  margin: 20px;
+  border-radius: 7px;
+}
+
+/* .red{
+  background-color: salmon;
+}
+
+.blue{
+  background-color: lightblue;
+} */
+
+.date {
+  text-align: right;
+  margin-right: 15px;;
+}
+
+.input {
+  text-align: center;
+}
+
+li {
+  margin: 20px;
+  font-size: 20px;
+}
+
+#glist {
+  text-align:left;
+  margin-top: 30px;
+}
+
+/* Grid setting */
+
+/* .card {
+  scroll-snap-align: start;
+  display: grid;
+  width: 85vw;
+  height: 80vh;
+  grid-template-areas: 
+    "head"
+    "txt"
+    "foot";
+  grid-template-rows: 10% 1fr 80%;
+  border: 1px solid black;
+  margin: 20px;
+  border-radius: 7px;
+}
+
+.date {
+  grid-area: head;
+  text-align: right;
+  margin-right: 15px;;
+}
+
+.input {
+  grid-area: txt;
+  text-align: center;
+}
+
+li {
+  grid-area: foot;
+  margin: 20px;
+  font-size: 20px;
+} */
+
+/* End */
+
+#form {
+  display: flex;
+  flex-direction: row;
+  justify-content:center;
+  align-items: center;
+}
+
+
+#new {
+  font-family: "Palatino Linotype", "Book Antiqua", "Palatino", serif;
+  font-size: 18px;
+  line-height: 28px;
+  border: 1px solid transparent;
+  border-radius:0px;
+  border-bottom: 1px solid black;
+ 
+}

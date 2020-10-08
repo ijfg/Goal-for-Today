@@ -13,7 +13,6 @@ function setDate(){
 function checkGoals(){
   if(localStorage.getItem(idDate)){
     obj = JSON.parse(localStorage.getItem(idDate));
-    // i = obj.length;
     for (const goal of Object.values(obj)) {
       const liSet = document.createElement('li');
       liSet.textContent = goal;
@@ -25,9 +24,8 @@ function checkGoals(){
 let obj = {};
 let newGoal;
 const field = document.getElementById('new');
-// let i = 0;
 
-document.getElementById('form').addEventListener('submit', performAction);
+document.getElementById('new').addEventListener('change', performAction);
 
 function performAction(event) {
   newGoal = field.value;
@@ -38,7 +36,6 @@ function performAction(event) {
   const liCurrent = document.createElement('li');
   liCurrent.textContent = goalObj[key];
   list.appendChild(liCurrent);
-  // i += 1;
   field.value = '';
   event.preventDefault();
 };
