@@ -1,41 +1,41 @@
-const list = document.getElementById('glist');
-let idDate;
+const glist = document.getElementById('glist');
+let idDateG;
 
 function setDate(){
   let d = new Date();
   let month = d.getMonth() + 1;
-  idDate = month.toString() + d.getDate().toString() + d.getFullYear().toString();
+  idDateG = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'G';
   let newDate = month +'.'+ d.getDate()+'.'+ d.getFullYear();
-  document.getElementById('date').innerHTML = newDate;
+  document.getElementById('gdate').innerHTML = newDate;
   checkGoals();
 };
 
 function checkGoals(){
-  if(localStorage.getItem(idDate)){
-    obj = JSON.parse(localStorage.getItem(idDate));
+  if(localStorage.getItem(idDateG)){
+    obj = JSON.parse(localStorage.getItem(idDateG));
     for (const goal of Object.values(obj)) {
       const liSet = document.createElement('li');
       liSet.textContent = goal;
-      list.appendChild(liSet);
+      glist.appendChild(liSet);
     };
   };
 };
 
 let obj = {};
 let newGoal;
-const field = document.getElementById('new');
+const field = document.getElementById('gnew');
 
-document.getElementById('new').addEventListener('change', performAction);
+document.getElementById('gnew').addEventListener('change', performAction);
 
 function performAction(event) {
   newGoal = field.value;
   const key = Object.keys(obj).length + 1;
   obj[key] = newGoal;
-  localStorage.setItem(idDate,JSON.stringify(obj));
-  const goalObj = JSON.parse(localStorage.getItem(idDate));
+  localStorage.setItem(idDateG,JSON.stringify(obj));
+  const goalObj = JSON.parse(localStorage.getItem(idDateG));
   const liCurrent = document.createElement('li');
   liCurrent.textContent = goalObj[key];
-  list.appendChild(liCurrent);
+  glist.appendChild(liCurrent);
   field.value = '';
   event.preventDefault();
 };
