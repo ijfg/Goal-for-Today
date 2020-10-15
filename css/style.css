@@ -10,14 +10,15 @@ body {
 
 .container {
   display: flex;
-  overflow: auto;
+  /* background-color: khaki; */
+  overflow: visible;
   flex: none;
-  /* width: 100%; */
+  width: 100%;
   flex-flow: row nowrap;
   scroll-snap-type: x mandatory;
   place-items: center center;
   /* justify-content: space-evenly; */
-  /* height: 100%; */
+  height: 100%;
 }
 
 /* Flex setting */
@@ -26,14 +27,14 @@ body {
   scroll-snap-align: center;
   flex: none;
   width: 100vw;
-  height: 100vh;
+  height: 85vh;
   display: flex;
   justify-content: center;
 }
 
 .cardcard {
   width: 85%;
-  height: 75%;
+  height: 95%;
   margin-left: auto;
   margin-right: auto;
   border: 1px solid black;
@@ -81,7 +82,7 @@ form {
   border-bottom: 1px solid black;
 }
 
-li {
+.card li {
   margin: 20px;
   font-size: 20px;
 }
@@ -89,4 +90,52 @@ li {
 #glist, #alist {
   text-align:left;
   margin: 13%;
+}
+
+#dotsUlHolder, #dotsUlHolder ul{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  /* height: 25vw; */
+  /* must add height to make centering work */
+  margin: auto;
+  z-index: 1;
+  position: fixed;
+  bottom: 0;
+  padding-bottom: 13%;
+  font-size: 35px;
+  letter-spacing: 5px;;
+  /* margin: 20px; */
+  font-weight: 900;
+}
+
+#dotsUlHolder li, #dotsUlHolder ul {
+  list-style-type: none;
+  color: grey;
+}
+
+@media only screen and (min-width: 400px) {
+  .cardcard {
+    width: 75%;
+  }
+}
+
+@media only screen and (min-width: 550px) {
+  .cardcard {
+    width: 58%;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .cardcard {
+    width: 43%;
+  }
+}
+
+@media only screen and (min-width: 1000px) {
+  .cardcard {
+    width: 33%;
+  }
 }

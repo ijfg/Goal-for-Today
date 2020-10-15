@@ -9,10 +9,18 @@ function setDate(){
   idDateG = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'G';
   idDateA = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'A';
   let newDate = month +'.'+ d.getDate()+'.'+ d.getFullYear();
-  document.getElementById('gdate').innerHTML = newDate;
-  document.getElementById('adate').innerHTML = newDate;
+  const goalDate = document.getElementById('gdate');
+  const achiDate = document.getElementById('adate');
+  goalDate.innerHTML = newDate;
+  const goalCard = goalDate.closest('.card');
+  // goalCard.addEventListener('scroll', throttle(activateDot));
+  goalCard.setAttribute('id', idDateG)
+  achiDate.innerHTML = newDate;
+  const achiCard = achiDate.closest('.card');
+  achiCard.setAttribute('id', idDateA);
   checkGoals();
   checkAchievements();
+  prepareDotDisplay();
 };
 
 function checkGoals(){
@@ -36,6 +44,46 @@ function checkAchievements(){
     };
   };
 };
+
+function prepareDotDisplay() {
+  const ulHolder = document.createElement('div');
+  ulHolder.setAttribute('id', 'dotsUlHolder');
+  const ulDot = document.createElement('ul');
+  ulDot.setAttribute('id', 'dotsHorizontal');
+  let cardsHorizontal = document.querySelectorAll('.card');
+  cardsHorizontal = Array.from(cardsHorizontal);
+  for(const card of cardsHorizontal) {
+    const idValue = card.getAttribute('id');
+    const newDot = document.createElement('li');
+    newDot.setAttribute('class', idValue );
+    newDot.textContent = '.';
+    ulDot.appendChild(newDot);
+  };
+  ulHolder.appendChild(ulDot);
+  document.body.appendChild(ulHolder);
+};
+
+function isInViewport(elem) {
+  let elemCheck = elem.getBoundingClientRect();
+  console.log(`${elemCheck.left} / ${window.innerWidth}`);
+  return (elemCheck.left >= 0 && elemCheck.left < window.innerWidth);
+};
+
+function activateDot() {
+  let cards = document.querySelectorAll('.card');
+  cards = Array.from(cards);
+  console.log(cards);
+  for (const card of cards) {
+    const cardKey = card.getAttribute('id');
+    let dotRelated = document.querySelector(`li[class="${cardKey}"]`);
+    if (isInViewport(card)) {
+      dotRelated.style.color='#d63031';
+    } else {
+      dotRelated.style.color="grey";
+    };
+  };
+};
+
 
 let objG = {};
 let objA = {};
@@ -85,4 +133,19 @@ function addLoadEvent(func){
   };
 };
 
+function throttle(action) {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(action);
+      isRunning = false;
+    };
+  };
+
 addLoadEvent(setDate);
+addLoadEvent(activateDot);
+window.addEventListener('scroll', throttle(activateDot));
+// window.addEventListener('scroll', function(e){
+//   console.log("scrolled!");
+// });
