@@ -78,6 +78,8 @@ function prepareDotDisplay() {
   };
   ulHolder.appendChild(ulDot);
   document.body.appendChild(ulHolder);
+  // const cardLoc = document.getElementById('cardMargin');
+  // cardLoc.appendChild(ulHolder);
 };
 
 function isInViewport(elem) {

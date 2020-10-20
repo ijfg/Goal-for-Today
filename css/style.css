@@ -24,22 +24,43 @@ body {
 /* Flex setting */
 
 .card {
+  display: flex;
   scroll-snap-align: center;
   flex: none;
   width: 100vw;
   height: 85vh;
-  display: flex;
   justify-content: center;
 }
 
 .cardcard {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
   width: 85%;
-  height: 95%;
+  height: 90%;
   margin-left: auto;
   margin-right: auto;
   border: 1px solid black;
   margin: 20px;
   border-radius: 7px;
+}
+
+footer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  /* padding: 15px; */
+  /* margin-left: 10px;
+  margin-right: 10px; */
+  margin-top: auto;
+  /* margin-bottom: 25px; */
+  align-self: flex-end;
+  justify-content: space-between;
+}
+
+.fas {
+  /* color: grey; */
+  padding: 25px;
 }
 
 /* .red{
@@ -127,6 +148,14 @@ form {
 
 .crossOut {
   text-decoration: line-through;
+}
+
+.pushleft {
+  margin-right: auto; /* for right button to stay far left */
+}
+
+.pushright {
+  margin-left: auto; /* for right button to stay far right */
 }
 
 @media only screen and (min-width: 400px) {
