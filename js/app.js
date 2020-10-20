@@ -1,12 +1,14 @@
 const glist = document.getElementById('glist');
 const alist = document.getElementById('alist');
 let idDateG;
+let idDateGS;
 let idDateA
 
 function setDate(){
   let d = new Date();
   let month = d.getMonth() + 1;
   idDateG = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'G';
+  idDateGS = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'GS';
   idDateA = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'A';
   let newDate = month +'.'+ d.getDate()+'.'+ d.getFullYear();
   const goalDate = document.getElementById('gdate');
@@ -26,9 +28,13 @@ function setDate(){
 function checkGoals(){
   if(localStorage.getItem(idDateG)){
     objG = JSON.parse(localStorage.getItem(idDateG));
+    objGState = JSON.parse(localStorage.getItem(idDateGS));
     for (const goal of Object.values(objG)) {
       const liSet = document.createElement('li');
       liSet.textContent = goal;
+      if (objGState[goal]) {
+        liSet.classList.toggle('crossOut');
+      }
       liSet.addEventListener('mousedown',(e) => {
         if (e.detail> 1) {
           e.preventDefault();
@@ -37,6 +43,8 @@ function checkGoals(){
       liSet.addEventListener('dblclick',(e) => {
         console.log('dblclick is working!');
         e.target.classList.toggle('crossOut');
+        objGState[goal] = !objGState[goal];
+        localStorage.setItem(idDateGS,JSON.stringify(objGState));
       });
       glist.appendChild(liSet);
     };
@@ -95,6 +103,7 @@ function activateDot() {
 
 
 let objG = {};
+let objGState = {};
 let objA = {};
 let newGoal;
 let newAchi;
@@ -108,18 +117,27 @@ function performActionG(event) {
   newGoal = fieldG.value;
   const key = Object.keys(objG).length + 1;
   objG[key] = newGoal;
+  objGState[newGoal] = false;
+  // Save into local storage
   localStorage.setItem(idDateG,JSON.stringify(objG));
+  localStorage.setItem(idDateGS,JSON.stringify(objGState));
+  // Update to DOM from data in local storage
   const goalObj = JSON.parse(localStorage.getItem(idDateG));
   const liCurrent = document.createElement('li');
   liCurrent.textContent = goalObj[key];
+  // Prevent double-clicking word selection
   liCurrent.addEventListener('mousedown',(e) => {
     if (e.detail> 1) {
       e.preventDefault();
     };
   });
+  // Double click to crossout item
   liCurrent.addEventListener('dblclick', (e) => {
     console.log('dblclick is working!');
     e.target.classList.toggle('crossOut');
+    // Add crossout state to local storage
+    objGState[goalObj[key]] = !objGState[goalObj[key]];
+    localStorage.setItem(idDateGS,JSON.stringify(objGState));
   });
   glist.appendChild(liCurrent);
   fieldG.value = '';
