@@ -5,6 +5,8 @@
 
 body {
   font-family: "Palatino Linotype", "Book Antiqua", "Palatino", serif;
+  /* font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue",
+  Helvetica, Arial, "Lucida Grande", sans-serif; */
   height: 100%;
 }
 
@@ -37,7 +39,7 @@ body {
   flex-direction: column;
   flex: 0 0 auto;
   width: 85%;
-  height: 90%;
+  height: 88%;
   margin-left: auto;
   margin-right: auto;
   border: 1px solid black;
@@ -59,16 +61,18 @@ footer {
 }
 
 .fas {
-  /* color: grey; */
+  color: lightgrey;
   padding: 15px;
   margin: 10px;
   /* border: 1px solid white; */
   border-radius: 48%;
-  transition: .4s;
+  transition: .5s;
+  font-size: 17px;
 }
 
 .fas:hover {
   background-color: khaki;
+  color: black;
 }
 
 /* .red{
@@ -81,7 +85,11 @@ footer {
 
 .date {
   text-align: right;
-  margin: 15px;;
+  margin: 15px;
+}
+
+h4 {
+  font-weight: 300;
 }
 
 .input {
@@ -102,6 +110,8 @@ form {
 
 #gnew, #anew {
   width: 240px;
+  /* font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue",
+  Helvetica, Arial, "Lucida Grande", sans-serif; */
   font-family: "Palatino Linotype", "Book Antiqua", "Palatino", serif;
   /* background-color: khaki; */
   font-size: 18px;
@@ -114,6 +124,7 @@ form {
 .card li {
   margin: 20px;
   font-size: 20px;
+  /* text-transform: capitalize; */
   transition: .4s;
   border-radius: 2.5px;
 }

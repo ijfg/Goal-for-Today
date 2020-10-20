@@ -10,7 +10,7 @@ function setDate(){
   idDateG = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'G';
   idDateGS = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'GS';
   idDateA = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'A';
-  let newDate = month +'.'+ d.getDate()+'.'+ d.getFullYear();
+  let newDate = month +'-'+ d.getDate()+'-'+ d.getFullYear();
   const goalDate = document.getElementById('gdate');
   const achiDate = document.getElementById('adate');
   goalDate.innerHTML = newDate;
@@ -158,6 +158,16 @@ function performActionA(event) {
   fieldA.value = '';
   event.preventDefault();
 };
+
+document.getElementById('gReset').addEventListener('click', (e) => {
+  console.log("Reset click is working!");
+  objG = {};
+  objGState = {};
+  const listToClear = document.getElementById('glist');
+  listToClear.innerHTML = "";
+  localStorage.setItem(idDateG,JSON.stringify(objG));
+  localStorage.setItem(idDateGS,JSON.stringify(objGState));
+});
 
 function addLoadEvent(func){
   const oldonload = window.onload;
