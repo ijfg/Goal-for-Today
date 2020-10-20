@@ -42,7 +42,7 @@ body {
   margin-right: auto;
   border: 1px solid black;
   margin: 20px;
-  border-radius: 7px;
+  border-radius: 11px;
 }
 
 footer {
@@ -60,7 +60,15 @@ footer {
 
 .fas {
   /* color: grey; */
-  padding: 25px;
+  padding: 15px;
+  margin: 10px;
+  /* border: 1px solid white; */
+  border-radius: 48%;
+  transition: .4s;
+}
+
+.fas:hover {
+  background-color: khaki;
 }
 
 /* .red{
@@ -107,14 +115,15 @@ form {
   margin: 20px;
   font-size: 20px;
   transition: .4s;
+  border-radius: 2.5px;
 }
 
 .goal li:hover {
-  background-color: lightcyan;
+  background-color: khaki;
 }
 
 .achi li:hover {
-  background-color: rgb(249, 224, 255);
+  background-color: rgb(240, 140, 157);
 }
 
 #glist, #alist {
