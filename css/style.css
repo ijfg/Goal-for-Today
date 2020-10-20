@@ -85,6 +85,15 @@ form {
 .card li {
   margin: 20px;
   font-size: 20px;
+  transition: .4s;
+}
+
+.goal li:hover {
+  background-color: lightcyan;
+}
+
+.achi li:hover {
+  background-color: rgb(249, 224, 255);
 }
 
 #glist, #alist {
@@ -114,6 +123,10 @@ form {
 #dotsUlHolder li, #dotsUlHolder ul {
   list-style-type: none;
   color: grey;
+}
+
+.crossOut {
+  text-decoration: line-through;
 }
 
 @media only screen and (min-width: 400px) {

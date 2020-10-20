@@ -29,6 +29,15 @@ function checkGoals(){
     for (const goal of Object.values(objG)) {
       const liSet = document.createElement('li');
       liSet.textContent = goal;
+      liSet.addEventListener('mousedown',(e) => {
+        if (e.detail> 1) {
+          e.preventDefault();
+        };
+      });
+      liSet.addEventListener('dblclick',(e) => {
+        console.log('dblclick is working!');
+        e.target.classList.toggle('crossOut');
+      });
       glist.appendChild(liSet);
     };
   };
@@ -103,6 +112,15 @@ function performActionG(event) {
   const goalObj = JSON.parse(localStorage.getItem(idDateG));
   const liCurrent = document.createElement('li');
   liCurrent.textContent = goalObj[key];
+  liCurrent.addEventListener('mousedown',(e) => {
+    if (e.detail> 1) {
+      e.preventDefault();
+    };
+  });
+  liCurrent.addEventListener('dblclick', (e) => {
+    console.log('dblclick is working!');
+    e.target.classList.toggle('crossOut');
+  });
   glist.appendChild(liCurrent);
   fieldG.value = '';
   event.preventDefault();
@@ -146,6 +164,3 @@ function throttle(action) {
 addLoadEvent(setDate);
 addLoadEvent(activateDot);
 window.addEventListener('scroll', throttle(activateDot));
-// window.addEventListener('scroll', function(e){
-//   console.log("scrolled!");
-// });
