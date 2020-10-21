@@ -163,8 +163,7 @@ document.getElementById('gReset').addEventListener('click', (e) => {
   console.log("Reset click is working!");
   objG = {};
   objGState = {};
-  const listToClear = document.getElementById('glist');
-  listToClear.innerHTML = "";
+  glist.innerHTML = "";
   localStorage.setItem(idDateG,JSON.stringify(objG));
   localStorage.setItem(idDateGS,JSON.stringify(objGState));
 });
