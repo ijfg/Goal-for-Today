@@ -36,10 +36,11 @@ body {
 
 .cardcard {
   display: flex;
+  overflow: scroll;
   flex-direction: column;
   flex: 0 0 auto;
   width: 85%;
-  height: 88%;
+  height: 90%;
   margin-left: auto;
   margin-right: auto;
   border: 1px solid black;
@@ -123,7 +124,7 @@ form {
 
 .card li {
   margin: 20px;
-  font-size: 20px;
+  font-size: 19px;
   /* text-transform: capitalize; */
   transition: .4s;
   border-radius: 2.5px;
@@ -139,7 +140,7 @@ form {
 
 #glist, #alist {
   text-align:left;
-  margin: 13%;
+  margin: 11% 13% 0 13%;
 }
 
 #dotsUlHolder, #dotsUlHolder ul{
@@ -154,7 +155,7 @@ form {
   z-index: 1;
   position: fixed;
   bottom: 0;
-  padding-bottom: 13%;
+  padding-bottom: 20px;
   font-size: 35px;
   letter-spacing: 5px;;
   /* margin: 20px; */
