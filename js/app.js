@@ -19,11 +19,11 @@ function createCard (d) {
       <ol id="${idDate}glist"></ol>
     </div>
     <footer>
-      <i class="fas fa-redo" id="${idDate}gReset" title="Reset card"></i>
-      <i class="fas fa-plus" title="Create card for tomorrow"></i>
+      <i class="fas fasd fa-redo" id="${idDate}gReset" title="Reset card"></i>
+      <i class="fas fasd fa-plus" id="${idDate}gAdd" title="Create card for tomorrow"></i>
     </footer>
   </div>
-</div>
+</div>  
 <div class="card achi"  id="${idDate}A">
   <div class="cardcard">
     <div class="date">
@@ -41,7 +41,7 @@ function createCard (d) {
 </div>
   `;
   document.body.append(section);
-  checkGoals(idDate);
+  checkGoals(d, idDate);
   checkAchievements(idDate);
   prepareDotDisplay();
 }
@@ -106,7 +106,7 @@ function OnStartUp(){
   // prepareDotDisplay();
 };
 
-function checkGoals(idDate){
+function checkGoals(d, idDate){
   let objG = {};
   let objGState = {};
   const dGlist = idDate + 'glist';
@@ -145,9 +145,38 @@ function checkGoals(idDate){
     localStorage.setItem(idDate + 'G',JSON.stringify(objG));
     localStorage.setItem(idDate + 'GS',JSON.stringify(objGState));
   });
+  // Setup add card button
+  const dGAdd = idDate + 'gAdd';
+  document.getElementById(dGAdd).addEventListener('click', (e) => {
+    addCard(d, dGAdd)}, {once: true});
+  // const today = new Date();
+  // const todayM = today.getMonth() + 1;
+  // const idToday = todayM.toString() + today.getDate().toString() + today.getFullYear().toString();
+  // console.log(idDate + " / " + idToday);
+  // console.log(Object.is(idDate, idToday));
+  // console.log(idDate === idToday);
+  // if (Object.is(idDate, idToday)) {
+  //   console.log('boolean working');
+  //   document.getElementById(dGAdd).addEventListener('click', (e) => {
+  //     addCard(dGAdd)}, {once: true});
+  // } else {
+  //   document.getElementById(dGAdd).classList.toggle('fasd');
+  // }
   // Setup input field
-  document.getElementById(dGnew).addEventListener('change', function(e) {
+  document.getElementById(dGnew).addEventListener('change', (e) => {
     performActionG(idDate, objG, objGState, dGnew, dGlist)});
+  };
+  
+  function addCard(d, dGAdd) {
+    console.log("Add click is working!");
+    let nextD = d;
+    nextD.setDate(nextD.getDate() + 1);
+    createCard(nextD)
+    document.getElementById(dGAdd).classList.toggle('fasd');
+    document.getElementById(dGAdd).classList.toggle('fasr');
+    // document.getElementById(dGAdd).removeEventListener('click', (e) => {
+    //   addCard(dGAdd)});
+    // console.log("addcard listner removed");
 };
 
 function checkAchievements(idDate){
