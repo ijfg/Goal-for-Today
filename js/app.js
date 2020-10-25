@@ -135,11 +135,19 @@ function checkGoals(idDate){
       document.getElementById(dGlist).appendChild(liSet);
     };
   };
+  // Setup goal reset button
+  const dGReset = idDate + 'gReset';
+  document.getElementById(dGReset).addEventListener('click', (e) => {
+    console.log("Reset click is working!");
+    objG = {};
+    objGState = {};
+    document.getElementById(dGlist).innerHTML = "";
+    localStorage.setItem(idDate + 'G',JSON.stringify(objG));
+    localStorage.setItem(idDate + 'GS',JSON.stringify(objGState));
+  });
+  // Setup input field
   document.getElementById(dGnew).addEventListener('change', function(e) {
     performActionG(idDate, objG, objGState, dGnew, dGlist)});
-  // document.getElementById(dGnew).addEventListener('change', function(e) {
-  //   console.log('getElementById(dGnew) is working');
-  // });
 };
 
 function checkAchievements(idDate){

@@ -67,11 +67,16 @@ footer {
 }
 
 .fas {
+  display: inline-block;
+  text-align: center;
+  width: 17px;
+  height: 17px;
+  line-height: 17px;
   color: lightgrey;
   padding: 15px;
   margin: 10px;
-  /* border: 1px solid white; */
-  border-radius: 48%;
+  /* border: 1px solid black; */
+  border-radius: 50%;
   transition: .4s;
   font-size: 17px;
 }
@@ -143,7 +148,7 @@ form {
 }
 
 .achi li:hover {
-  background-color: rgb(240, 140, 157);
+  background-color: #1abc9c;
 }
 
 ol {
