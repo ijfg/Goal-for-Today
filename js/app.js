@@ -43,7 +43,7 @@ function createCard (d) {
   document.body.append(section);
   checkGoals(d, idDate);
   checkAchievements(idDate);
-  prepareDotDisplay();
+  prepareDotDisplay(idDate);
 }
 
 function performActionG(idDate, objG, objGState, dGnew, dGlist) {
@@ -248,9 +248,10 @@ function performActionA(idDate, objA, objAState, dAnew, dAlist) {
 //   };
 // };
 
-function prepareDotDisplay() {
+function prepareDotDisplay(idDate) {
   const ulHolder = document.createElement('div');
-  ulHolder.setAttribute('id', 'dotsUlHolder');
+  ulHolder.classList.add('dotsUlHolder');
+  ulHolder.setAttribute('id', idDate + 'dot');
   const ulDot = document.createElement('ul');
   ulDot.setAttribute('id', 'dotsHorizontal');
   let cardsHorizontal = document.querySelectorAll('.card');
@@ -263,7 +264,16 @@ function prepareDotDisplay() {
     ulDot.appendChild(newDot);
   };
   ulHolder.appendChild(ulDot);
-  document.body.appendChild(ulHolder);
+  document.getElementById(idDate + 'G').appendChild(ulHolder);
+  window.addEventListener('scroll', throttle(function(e){
+    console.log("pageYOffset is working!");
+    let y = window.pageYOffset;
+    console.log(y);
+    document.getElementById(idDate + 'dot').style.top = -y + 720 + "px";
+    console.log(ulHolder.style.top);
+    console.log(document.getElementById(idDate + 'dot').style.top);
+  }))
+  // document.body.appendChild(ulHolder);
   // const cardLoc = document.getElementById('cardMargin');
   // cardLoc.appendChild(ulHolder);
 };
@@ -271,7 +281,7 @@ function prepareDotDisplay() {
 function isInViewport(elem) {
   let elemCheck = elem.getBoundingClientRect();
   console.log(`${elemCheck.left} / ${window.innerWidth}`);
-  return (elemCheck.left >= 0 && elemCheck.left < window.innerWidth);
+  return (elemCheck.left + window.innerWidth / 2 >= 0 && elemCheck.left + window.innerWidth / 2< window.innerWidth);
 };
 
 function activateDot() {
@@ -282,9 +292,9 @@ function activateDot() {
     const cardKey = card.getAttribute('id');
     let dotRelated = document.querySelector(`li[class="${cardKey}"]`);
     if (isInViewport(card)) {
-      dotRelated.style.color='#d63031';
+      dotRelated.style.color='#1abc9c';
     } else {
-      dotRelated.style.color="grey";
+      dotRelated.style.color="lightgrey";
     };
   };
 };

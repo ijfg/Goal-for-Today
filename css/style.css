@@ -160,7 +160,7 @@ form {
   border-bottom: 1px solid black;
 } */
 
-.card li {
+.card ol li {
   margin: 20px;
   font-size: 19px;
   /* text-transform: capitalize; */
@@ -168,11 +168,11 @@ form {
   border-radius: 2.5px;
 }
 
-.goal li:hover {
+.goal ol li:hover {
   background-color: khaki;
 }
 
-.achi li:hover {
+.achi ol li:hover {
   background-color: #1abc9c;
 }
 
@@ -186,28 +186,31 @@ ol {
   margin: 11% 13% 0 13%;
 } */
 
-#dotsUlHolder, #dotsUlHolder ul{
+.dotsUlHolder, .dotsUlHolder ul{
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   width: 100vw;
-  /* height: 25vw; */
+  height: 25px;
   /* must add height to make centering work */
   margin: auto;
-  z-index: 1;
+  /* z-index: 1; */
   position: fixed;
-  bottom: 0;
+  top: 720px;
+  left: 0;
+  /* bottom: 0; */
   padding-bottom: 20px;
   font-size: 35px;
   letter-spacing: 5px;;
   /* margin: 20px; */
   font-weight: 900;
+  box-sizing: border-box;
 }
 
-#dotsUlHolder li, #dotsUlHolder ul {
+.dotsUlHolder li, .dotsUlHolder ul {
   list-style-type: none;
-  color: grey;
+  color: lightgrey;
 }
 
 .crossOut {
