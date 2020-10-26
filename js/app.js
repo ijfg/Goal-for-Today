@@ -5,46 +5,56 @@ function createCard (d) {
   const section = document.createElement('section');
   section.setAttribute('class', 'container');
   section.innerHTML = `
-  <div class="card goal" id="${idDate}G">
-  <div class="cardcard">
-    <div class="date">
-      <h4 id="${idDate}gdate">${displayDate}</h4>
+  <div class="card">
+    <div class="cardcard goal">
+      <div class="date">
+        <h4 id="${idDate}gdate">${displayDate}</h4>
+      </div>
+      <div class="main">
+        <form onsubmit="return false">
+          <label>
+            <input id="${idDate}gnew" type="text" name="input" placeholder=" Set goals">
+          </label>
+        </form>
+        <ol id="${idDate}glist"></ol>
+      </div>
+      <footer>
+        <i class="fas fasd fa-redo" id="${idDate}gReset" title="Reset card"></i>
+        <i class="fas fasd fa-chevron-right" id="${idDate}gFlip"></i>
+        <i class="fas fasd fa-plus" id="${idDate}gAdd" title="Create card for tomorrow"></i>
+      </footer>
     </div>
-    <div class="main">
-      <form onsubmit="return false">
-        <label>
-          <input id="${idDate}gnew" type="text" name="input" placeholder=" Set goals">
-        </label>
-      </form>
-      <ol id="${idDate}glist"></ol>
-    </div>
-    <footer>
-      <i class="fas fasd fa-redo" id="${idDate}gReset" title="Reset card"></i>
-      <i class="fas fasd fa-plus" id="${idDate}gAdd" title="Create card for tomorrow"></i>
+    <div class="cardcard achi">
+      <div class="date">
+        <h4 id="${idDate}adate">${displayDate}</h4>
+      </div>
+      <div class="main">
+        <form onsubmit="return false">
+          <label>
+            <input id="${idDate}anew" type="text" name="input" placeholder=" Record achievements">
+          </label>
+        </form>
+        <ol id="${idDate}alist"></ol>
+      </div>
+      <footer>
+      <i class="fas fasd fa-chevron-left" id="${idDate}aFlip"></i>
     </footer>
-  </div>
-</div>  
-<div class="card achi"  id="${idDate}A">
-  <div class="cardcard">
-    <div class="date">
-      <h4 id="${idDate}adate">${displayDate}</h4>
-    </div>
-    <div class="main">
-      <form onsubmit="return false">
-        <label>
-          <input id="${idDate}anew" type="text" name="input" placeholder=" Record achievements">
-        </label>
-      </form>
-      <ol id="${idDate}alist"></ol>
     </div>
   </div>
-</div>
   `;
-  document.body.append(section);
+  const scriptTag = document.getElementsByTagName('script')[0];
+  document.body.insertBefore(section, scriptTag);
+  document.getElementById(idDate + 'gFlip').addEventListener('click', (e) => {
+    console.log("body clicked!");
+    document.getElementsByTagName('section')[0].classList.toggle('flip');
+  });
+  document.getElementById(idDate + 'aFlip').addEventListener('click', (e) => {
+    console.log("body clicked!");
+    document.getElementsByTagName('section')[0].classList.toggle('flip');
+  });
   checkGoals(d, idDate);
   checkAchievements(idDate);
-  prepareDotDisplay(idDate);
-}
+};
 
 function performActionG(idDate, objG, objGState, dGnew, dGlist) {
   // Get newly input goal value
@@ -87,23 +97,6 @@ function performActionG(idDate, objG, objGState, dGnew, dGlist) {
 function OnStartUp(){
   let d = new Date();
   createCard(d);
-  // let month = d.getMonth() + 1;
-  // idDateG = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'G';
-  // idDateGS = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'GS';
-  // idDateA = month.toString() + d.getDate().toString() + d.getFullYear().toString() + 'A';
-  // let newDate = month +'-'+ d.getDate()+'-'+ d.getFullYear();
-  // const goalDate = document.getElementById('gdate');
-  // const achiDate = document.getElementById('adate');
-  // goalDate.innerHTML = newDate;
-  // const goalCard = goalDate.closest('.card');
-  // // goalCard.addEventListener('scroll', throttle(activateDot));
-  // goalCard.setAttribute('id', idDateG)
-  // achiDate.innerHTML = newDate;
-  // const achiCard = achiDate.closest('.card');
-  // achiCard.setAttribute('id', idDateA);
-  // checkGoals();
-  // checkAchievements();
-  // prepareDotDisplay();
 };
 
 function checkGoals(d, idDate){
@@ -149,19 +142,6 @@ function checkGoals(d, idDate){
   const dGAdd = idDate + 'gAdd';
   document.getElementById(dGAdd).addEventListener('click', (e) => {
     addCard(d, dGAdd)}, {once: true});
-  // const today = new Date();
-  // const todayM = today.getMonth() + 1;
-  // const idToday = todayM.toString() + today.getDate().toString() + today.getFullYear().toString();
-  // console.log(idDate + " / " + idToday);
-  // console.log(Object.is(idDate, idToday));
-  // console.log(idDate === idToday);
-  // if (Object.is(idDate, idToday)) {
-  //   console.log('boolean working');
-  //   document.getElementById(dGAdd).addEventListener('click', (e) => {
-  //     addCard(dGAdd)}, {once: true});
-  // } else {
-  //   document.getElementById(dGAdd).classList.toggle('fasd');
-  // }
   // Setup input field
   document.getElementById(dGnew).addEventListener('change', (e) => {
     performActionG(idDate, objG, objGState, dGnew, dGlist)});
@@ -211,43 +191,6 @@ function performActionA(idDate, objA, objAState, dAnew, dAlist) {
   event.preventDefault();
 };
 
-// function checkGoals(){
-//   if(localStorage.getItem(idDateG)){
-//     objG = JSON.parse(localStorage.getItem(idDateG));
-//     objGState = JSON.parse(localStorage.getItem(idDateGS));
-//     for (const goal of Object.values(objG)) {
-//       const liSet = document.createElement('li');
-//       liSet.textContent = goal;
-//       if (objGState[goal]) {
-//         liSet.classList.toggle('crossOut');
-//       }
-//       liSet.addEventListener('mousedown',(e) => {
-//         if (e.detail> 1) {
-//           e.preventDefault();
-//         };
-//       });
-//       liSet.addEventListener('dblclick',(e) => {
-//         console.log('dblclick is working!');
-//         e.target.classList.toggle('crossOut');
-//         objGState[goal] = !objGState[goal];
-//         localStorage.setItem(idDateGS,JSON.stringify(objGState));
-//       });
-//       glist.appendChild(liSet);
-//     };
-//   };
-// };
-
-// function checkAchievements(){
-//   if(localStorage.getItem(idDateA)){
-//     objA = JSON.parse(localStorage.getItem(idDateA));
-//     for (const achievment of Object.values(objA)) {
-//       const achiSet = document.createElement('li');
-//       achiSet.textContent = achievment;
-//       alist.appendChild(achiSet);
-//     };
-//   };
-// };
-
 function prepareDotDisplay(idDate) {
   const ulHolder = document.createElement('div');
   ulHolder.classList.add('dotsUlHolder');
@@ -284,86 +227,6 @@ function isInViewport(elem) {
   return (elemCheck.left + window.innerWidth / 2 >= 0 && elemCheck.left + window.innerWidth / 2< window.innerWidth);
 };
 
-function activateDot() {
-  let cards = document.querySelectorAll('.card');
-  cards = Array.from(cards);
-  console.log(cards);
-  for (const card of cards) {
-    const cardKey = card.getAttribute('id');
-    let dotRelated = document.querySelector(`li[class="${cardKey}"]`);
-    if (isInViewport(card)) {
-      dotRelated.style.color='#1abc9c';
-    } else {
-      dotRelated.style.color="lightgrey";
-    };
-  };
-};
-
-
-// let objG = {};
-// let objGState = {};
-// let objA = {};
-// let newGoal;
-// let newAchi;
-// const fieldG = document.getElementById('gnew');
-// const fieldA = document.getElementById('anew');
-
-// document.getElementById('gnew').addEventListener('change', performActionG);
-// document.getElementById('anew').addEventListener('change', performActionA);
-
-// function performActionG(event) {
-//   newGoal = fieldG.value;
-//   const key = Object.keys(objG).length + 1;
-//   objG[key] = newGoal;
-//   objGState[newGoal] = false;
-//   // Save into local storage
-//   localStorage.setItem(idDateG,JSON.stringify(objG));
-//   localStorage.setItem(idDateGS,JSON.stringify(objGState));
-//   // Update to DOM from data in local storage
-//   const goalObj = JSON.parse(localStorage.getItem(idDateG));
-//   const liCurrent = document.createElement('li');
-//   liCurrent.textContent = goalObj[key];
-//   // Prevent double-clicking word selection
-//   liCurrent.addEventListener('mousedown',(e) => {
-//     if (e.detail> 1) {
-//       e.preventDefault();
-//     };
-//   });
-//   // Double click to crossout item
-//   liCurrent.addEventListener('dblclick', (e) => {
-//     console.log('dblclick is working!');
-//     e.target.classList.toggle('crossOut');
-//     // Add crossout state to local storage
-//     objGState[goalObj[key]] = !objGState[goalObj[key]];
-//     localStorage.setItem(idDateGS,JSON.stringify(objGState));
-//   });
-//   glist.appendChild(liCurrent);
-//   fieldG.value = '';
-//   event.preventDefault();
-// };
-
-// function performActionA(event) {
-//   newAchi = fieldA.value;
-//   const key = Object.keys(objA).length + 1;
-//   objA[key] = newAchi;
-//   localStorage.setItem(idDateA,JSON.stringify(objA));
-//   const achiObj = JSON.parse(localStorage.getItem(idDateA));
-//   const achiCurrent = document.createElement('li');
-//   achiCurrent.textContent = achiObj[key];
-//   alist.appendChild(achiCurrent);
-//   fieldA.value = '';
-//   event.preventDefault();
-// };
-
-// document.getElementById('gReset').addEventListener('click', (e) => {
-//   console.log("Reset click is working!");
-//   objG = {};
-//   objGState = {};
-//   glist.innerHTML = "";
-//   localStorage.setItem(idDateG,JSON.stringify(objG));
-//   localStorage.setItem(idDateGS,JSON.stringify(objGState));
-// });
-
 function addLoadEvent(func){
   const oldonload = window.onload;
   if (typeof window.onload != "function") {
@@ -387,5 +250,3 @@ function throttle(action) {
   };
 
 addLoadEvent(OnStartUp);
-addLoadEvent(activateDot);
-window.addEventListener('scroll', throttle(activateDot));

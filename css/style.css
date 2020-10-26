@@ -5,65 +5,82 @@
 
 body {
   font-family: "Palatino Linotype", "Book Antiqua", "Palatino", serif;
-  /* font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue",
-  Helvetica, Arial, "Lucida Grande", sans-serif; */
-  height: 100%;
-  /* background: linear-gradient(to right, lightgrey, ghostwhite); */
-  /* background-color: rgba(0, 148, 50,0.7); */
-}
-
-.container {
-  display: flex;
-  /* background-color: khaki; */
-  overflow: visible;
-  flex: none;
-  width: 100%;
-  flex-flow: row nowrap;
-  scroll-snap-type: x mandatory;
-  place-items: center center;
-  /* justify-content: space-evenly; */
-  height: 100%;
-}
-
-/* Flex setting */
-
-.card {
-  display: flex;
-  scroll-snap-align: center;
-  flex: none;
   width: 100vw;
   height: 100vh;
+  background-color: seagreen;
+  display: flex;
+}
+
+/* Flip-card use */
+.container { 
+  background-color: transparent;
+  width: 350px;
+  height: 600px;
+  perspective: 1000px;
+  display: flex;
+  /* overflow: visible; */
+  flex: none;
+  /* flex-flow: row nowrap; */
+  place-items: center center;
+  margin: auto;
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+  display: flex;
+  flex: none;
   justify-content: center;
   align-items: center;
 }
 
+.flip .card {
+  transform: rotateY(180deg);
+}
+
 .cardcard {
+  /* Flip related*/
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden; 
+  backface-visibility: hidden;
+  /* Content related */
   display: flex;
-  overflow: scroll;
+  overflow: auto;
   flex-direction: column;
   flex: 0 0 auto;
-  width: 85%;
-  height: 85%;
   margin-left: auto;
   margin-right: auto;
-  border: 1px solid black;
-  margin: 20px;
   border-radius: 11px;
   background-color: white;
-  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.08); */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.08);
+}
+
+.goal {
+  background-color: white;
+}
+
+.achi {
+  background-color: white;
+  transform: rotateY(180deg);
 }
 
 footer {
   display: flex;
   flex-direction: row;
   width: 100%;
-  /* padding: 15px; */
-  /* margin-left: 10px;
-  margin-right: 10px; */
   margin-top: auto;
-  /* margin-bottom: 25px; */
   align-self: flex-end;
   justify-content: space-between;
+}
+
+.achi footer {
+  justify-content: center;
 }
 
 .fasd {
@@ -75,7 +92,6 @@ footer {
   color: lightgrey;
   padding: 15px;
   margin: 10px;
-  /* border: 1px solid black; */
   border-radius: 50%;
   transition: .4s;
   font-size: 17px;
@@ -102,22 +118,8 @@ footer {
 }
 
 .fasr:hover {
-  /* background-color: grey; */
   color: lightgrey;
 }
-
-/* .fasd:hover {
-  background-color: khaki;
-  color: black;
-} */
-
-/* .red{
-  background-color: salmon;
-}
-
-.blue{
-  background-color: lightblue;
-} */
 
 .date {
   text-align: right;
@@ -150,16 +152,6 @@ form {
   width: 100%;
 }
 
-/* #gnew, #anew {
-  width: 240px;
-  font-family: "Palatino Linotype", "Book Antiqua", "Palatino", serif;
-  font-size: 18px;
-  line-height: 32px;
-  border: 1px solid transparent;
-  border-radius:0px;
-  border-bottom: 1px solid black;
-} */
-
 .card ol li {
   margin: 20px;
   font-size: 19px;
@@ -180,11 +172,6 @@ ol {
   text-align:left;
   margin: 11% 13% 0 13%;
 }
-
-/* #glist, #alist {
-  text-align:left;
-  margin: 11% 13% 0 13%;
-} */
 
 .dotsUlHolder, .dotsUlHolder ul{
   display: flex;
@@ -217,15 +204,7 @@ ol {
   text-decoration: line-through;
 }
 
-.pushleft {
-  margin-right: auto; /* for right button to stay far left */
-}
-
-.pushright {
-  margin-left: auto; /* for right button to stay far right */
-}
-
-@media only screen and (min-width: 400px) {
+/* @media only screen and (min-width: 400px) {
   .cardcard {
     width: 75%;
   }
@@ -265,4 +244,4 @@ ol {
   .cardcard {
     width: 25%;
   }
-}
+} */
