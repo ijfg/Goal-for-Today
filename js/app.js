@@ -4,6 +4,7 @@ function createCard (d) {
   const displayDate = month +'-'+ d.getDate()+'-'+ d.getFullYear();
   const section = document.createElement('section');
   section.setAttribute('class', 'container');
+  section.setAttribute('id', idDate + 'sec');
   section.innerHTML = `
   <div class="card">
     <div class="cardcard goal">
@@ -44,13 +45,13 @@ function createCard (d) {
   `;
   const scriptTag = document.getElementsByTagName('script')[0];
   document.body.insertBefore(section, scriptTag);
+  // Flip front to back event listner
   document.getElementById(idDate + 'gFlip').addEventListener('click', (e) => {
-    console.log("body clicked!");
-    document.getElementsByTagName('section')[0].classList.toggle('flip');
+    document.getElementById(idDate + 'sec').classList.toggle('flip');
   });
+  // Flip back to front event listner
   document.getElementById(idDate + 'aFlip').addEventListener('click', (e) => {
-    console.log("body clicked!");
-    document.getElementsByTagName('section')[0].classList.toggle('flip');
+    document.getElementById(idDate + 'sec').classList.toggle('flip');
   });
   checkGoals(d, idDate);
   checkAchievements(idDate);
