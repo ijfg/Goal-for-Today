@@ -5,10 +5,27 @@
 
 body {
   font-family: "Palatino Linotype", "Book Antiqua", "Palatino", serif;
-  width: 100vw;
-  height: 100vh;
   background-color: seagreen;
   display: flex;
+  flex-direction: column;
+  height: calc(var(--vh, 1vh) * 100);
+  /* overflow: hidden; */
+}
+
+#snapcontainer {
+  /* overflow: scroll; Somehow this conflict with scrollTop */ 
+  height: calc(var(--vh, 1vh) * 100);
+  scroll-snap-type: mandatory;
+  align-items: center;
+}
+
+.outter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(var(--vh, 1vh) * 100);
+  margin: auto;
+  scroll-snap-align: center;
 }
 
 /* Flip-card use */
@@ -20,9 +37,11 @@ body {
   display: flex;
   /* overflow: visible; */
   flex: none;
-  /* flex-flow: row nowrap; */
+  flex-flow: row nowrap;
   place-items: center center;
   margin: auto;
+  /* justify-content: center; */
+  /* align-items: center; */
 }
 
 .card {
@@ -52,6 +71,8 @@ body {
   /* Content related */
   display: flex;
   overflow: auto;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   flex-direction: column;
   flex: 0 0 auto;
   margin-left: auto;

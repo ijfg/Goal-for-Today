@@ -2,7 +2,10 @@ function createCard (d) {
   const month = d.getMonth() + 1;
   const idDate = month.toString() + d.getDate().toString() + d.getFullYear().toString();
   const displayDate = month +'-'+ d.getDate()+'-'+ d.getFullYear();
-  const section = document.createElement('section');
+  const sectionOutter = document.createElement('section');
+  sectionOutter.setAttribute('class', 'outter');
+  sectionOutter.setAttribute('id', idDate + 'out');
+  const section = document.createElement('div');
   section.setAttribute('class', 'container');
   section.setAttribute('id', idDate + 'sec');
   section.innerHTML = `
@@ -43,8 +46,10 @@ function createCard (d) {
     </div>
   </div>
   `;
-  const scriptTag = document.getElementsByTagName('script')[0];
-  document.body.insertBefore(section, scriptTag);
+  sectionOutter.appendChild(section);
+  document.getElementById('snapcontainer').appendChild(sectionOutter);
+  // const scriptTag = document.getElementsByTagName('script')[0];
+  // document.body.insertBefore(sectionOutter, scriptTag);
   // Flip front to back event listner
   document.getElementById(idDate + 'gFlip').addEventListener('click', (e) => {
     document.getElementById(idDate + 'sec').classList.toggle('flip');
@@ -146,18 +151,26 @@ function checkGoals(d, idDate){
   // Setup input field
   document.getElementById(dGnew).addEventListener('change', (e) => {
     performActionG(idDate, objG, objGState, dGnew, dGlist)});
-  };
+};
   
-  function addCard(d, dGAdd) {
-    console.log("Add click is working!");
-    let nextD = d;
-    nextD.setDate(nextD.getDate() + 1);
-    createCard(nextD)
-    document.getElementById(dGAdd).classList.toggle('fasd');
-    document.getElementById(dGAdd).classList.toggle('fasr');
-    // document.getElementById(dGAdd).removeEventListener('click', (e) => {
-    //   addCard(dGAdd)});
-    // console.log("addcard listner removed");
+function addCard(d, dGAdd) {
+  console.log("Add click is working!");
+  let nextD = d;
+  nextD.setDate(nextD.getDate() + 1);
+  createCard(nextD)
+  // Scroll to the newly created cards
+  const m = nextD.getMonth() + 1;
+  const idD = m.toString() + nextD.getDate().toString() + nextD.getFullYear().toString();
+  const scrollEle = document.getElementById(idD + 'out');
+  // scrollEle.scrollIntoView({behavior: "smooth"});
+  const scrollDis = document.getElementById(idD + 'out').getBoundingClientRect().top;
+  console.log("Distance to viewport top: " + scrollDis);
+  scrollToSection(scrollEle, scrollDis);
+  document.getElementById(dGAdd).classList.toggle('fasd');
+  document.getElementById(dGAdd).classList.toggle('fasr');
+  // document.getElementById(dGAdd).removeEventListener('click', (e) => {
+  //   addCard(dGAdd)});
+  // console.log("addcard listner removed");
 };
 
 function checkAchievements(idDate){
@@ -192,40 +205,86 @@ function performActionA(idDate, objA, objAState, dAnew, dAlist) {
   event.preventDefault();
 };
 
-function prepareDotDisplay(idDate) {
-  const ulHolder = document.createElement('div');
-  ulHolder.classList.add('dotsUlHolder');
-  ulHolder.setAttribute('id', idDate + 'dot');
-  const ulDot = document.createElement('ul');
-  ulDot.setAttribute('id', 'dotsHorizontal');
-  let cardsHorizontal = document.querySelectorAll('.card');
-  cardsHorizontal = Array.from(cardsHorizontal);
-  for(const card of cardsHorizontal) {
-    const idValue = card.getAttribute('id');
-    const newDot = document.createElement('li');
-    newDot.setAttribute('class', idValue );
-    newDot.textContent = '.';
-    ulDot.appendChild(newDot);
-  };
-  ulHolder.appendChild(ulDot);
-  document.getElementById(idDate + 'G').appendChild(ulHolder);
-  window.addEventListener('scroll', throttle(function(e){
-    console.log("pageYOffset is working!");
-    let y = window.pageYOffset;
-    console.log(y);
-    document.getElementById(idDate + 'dot').style.top = -y + 720 + "px";
-    console.log(ulHolder.style.top);
-    console.log(document.getElementById(idDate + 'dot').style.top);
-  }))
-  // document.body.appendChild(ulHolder);
-  // const cardLoc = document.getElementById('cardMargin');
-  // cardLoc.appendChild(ulHolder);
+// function prepareDotDisplay(idDate) {
+//   const ulHolder = document.createElement('div');
+//   ulHolder.classList.add('dotsUlHolder');
+//   ulHolder.setAttribute('id', idDate + 'dot');
+//   const ulDot = document.createElement('ul');
+//   ulDot.setAttribute('id', 'dotsHorizontal');
+//   let cardsHorizontal = document.querySelectorAll('.card');
+//   cardsHorizontal = Array.from(cardsHorizontal);
+//   for(const card of cardsHorizontal) {
+//     const idValue = card.getAttribute('id');
+//     const newDot = document.createElement('li');
+//     newDot.setAttribute('class', idValue );
+//     newDot.textContent = '.';
+//     ulDot.appendChild(newDot);
+//   };
+//   ulHolder.appendChild(ulDot);
+//   document.getElementById(idDate + 'G').appendChild(ulHolder);
+//   window.addEventListener('scroll', throttle(function(e){
+//     console.log("pageYOffset is working!");
+//     let y = window.pageYOffset;
+//     console.log(y);
+//     document.getElementById(idDate + 'dot').style.top = -y + 720 + "px";
+//     console.log(ulHolder.style.top);
+//     console.log(document.getElementById(idDate + 'dot').style.top);
+//   }))
+//   // document.body.appendChild(ulHolder);
+//   // const cardLoc = document.getElementById('cardMargin');
+//   // cardLoc.appendChild(ulHolder);
+// };
+
+// function isInViewport(elem) {
+//   let elemCheck = elem.getBoundingClientRect();
+//   console.log(`${elemCheck.left} / ${window.innerWidth}`);
+//   return (elemCheck.left + window.innerWidth / 2 >= 0 && elemCheck.left + window.innerWidth / 2< window.innerWidth);
+// };
+
+function position() {
+  // return el.scrollTop;
+  return document.documentElement.scrollTop ||
+  document.body.parentNode.scrollTop ||
+  document.body.scrollTop;
 };
 
-function isInViewport(elem) {
-  let elemCheck = elem.getBoundingClientRect();
-  console.log(`${elemCheck.left} / ${window.innerWidth}`);
-  return (elemCheck.left + window.innerWidth / 2 >= 0 && elemCheck.left + window.innerWidth / 2< window.innerWidth);
+function move(ele, amount) {
+  // e.scrollTop = amount;
+  // let moveDis = ele.offsetTop - document.documentElement.scrollTop;
+  // moveDis = amount;
+  // window.scrollTo(0, amount);
+  document.documentElement.scrollTop = amount;
+  document.body.parentNode.scrollTop = amount;
+  document.body.scrollTop = amount;
+  console.log("move amount: " + amount );
+  console.log("documentElement.scrollTop : " + document.documentElement.scrollTop);
+  console.log(document.body.parentNode.scrollTop);
+  console.log(document.body.scrollTop);
+  console.log("ele.offsetTop : " + ele.offsetTop);
+};
+
+Math.inOutQuintic = (t, b, c, d) => {
+var ts = (t/=d)*t,
+tc = ts*t;
+return b+c*(6*tc*ts + -15*ts*ts + 10*tc);
+};
+
+function scrollToSection(ele, distance) {
+  console.log("scrollToSection functioin starts!")
+  let beginPos = position();
+  console.log("begining position: " + beginPos);
+  let currentTime = 0;
+  let increment = 20;
+  let animateScroll = () => {
+    currentTime += increment;
+    let value = Math.inOutQuintic(currentTime, beginPos, distance, 600);
+    // value = Math.round(value);
+    move(ele, value);
+    if (currentTime < 600) {
+      window.requestAnimationFrame(animateScroll);
+    };
+  };
+  animateScroll();
 };
 
 function addLoadEvent(func){
@@ -250,4 +309,11 @@ function throttle(action) {
     };
   };
 
+function setDocHeight() {
+  document.documentElement.style.setProperty('--vh', `${window.innerHeight/100}px`);
+}
+
+window.addEventListener('resize', throttle(setDocHeight));
+window.addEventListener('orientationchange',throttle(setDocHeight));
 addLoadEvent(OnStartUp);
+addLoadEvent(setDocHeight);
