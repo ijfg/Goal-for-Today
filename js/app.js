@@ -17,7 +17,7 @@ function createCard (d) {
       <div class="main">
         <form onsubmit="return false">
           <label>
-            <input id="${idDate}gnew" type="text" name="input" placeholder=" Set goals">
+            <input id="${idDate}gnew" type="text" name="input" placeholder=" Goals">
           </label>
         </form>
         <ol id="${idDate}glist"></ol>
@@ -35,7 +35,7 @@ function createCard (d) {
       <div class="main">
         <form onsubmit="return false">
           <label>
-            <input id="${idDate}anew" type="text" name="input" placeholder=" Record achievements">
+            <input id="${idDate}anew" type="text" name="input" placeholder=" Achievements">
           </label>
         </form>
         <ol id="${idDate}alist"></ol>
@@ -47,9 +47,9 @@ function createCard (d) {
   </div>
   `;
   sectionOutter.appendChild(section);
-  document.getElementById('snapcontainer').appendChild(sectionOutter);
-  // const scriptTag = document.getElementsByTagName('script')[0];
-  // document.body.insertBefore(sectionOutter, scriptTag);
+  // document.getElementById('snapcontainer').appendChild(sectionOutter);
+  const scriptTag = document.getElementsByTagName('script')[0];
+  document.body.insertBefore(sectionOutter, scriptTag);
   // Flip front to back event listner
   document.getElementById(idDate + 'gFlip').addEventListener('click', (e) => {
     document.getElementById(idDate + 'sec').classList.toggle('flip');
@@ -154,6 +154,8 @@ function checkGoals(d, idDate){
 };
   
 function addCard(d, dGAdd) {
+  setDocHeight(); // both mobile safari and chrome ok, but with a mild 
+  // throttle(setDocHeight); // mobile chrome: no / safari: ok
   console.log("Add click is working!");
   let nextD = d;
   nextD.setDate(nextD.getDate() + 1);
@@ -165,7 +167,7 @@ function addCard(d, dGAdd) {
   // scrollEle.scrollIntoView({behavior: "smooth"});
   const scrollDis = document.getElementById(idD + 'out').getBoundingClientRect().top;
   console.log("Distance to viewport top: " + scrollDis);
-  scrollToSection(scrollEle, scrollDis);
+  // scrollToSection(scrollEle, scrollDis);
   document.getElementById(dGAdd).classList.toggle('fasd');
   document.getElementById(dGAdd).classList.toggle('fasr');
   // document.getElementById(dGAdd).removeEventListener('click', (e) => {
@@ -249,18 +251,9 @@ function position() {
 };
 
 function move(ele, amount) {
-  // e.scrollTop = amount;
-  // let moveDis = ele.offsetTop - document.documentElement.scrollTop;
-  // moveDis = amount;
-  // window.scrollTo(0, amount);
   document.documentElement.scrollTop = amount;
   document.body.parentNode.scrollTop = amount;
   document.body.scrollTop = amount;
-  console.log("move amount: " + amount );
-  console.log("documentElement.scrollTop : " + document.documentElement.scrollTop);
-  console.log(document.body.parentNode.scrollTop);
-  console.log(document.body.scrollTop);
-  console.log("ele.offsetTop : " + ele.offsetTop);
 };
 
 Math.inOutQuintic = (t, b, c, d) => {
@@ -313,7 +306,7 @@ function setDocHeight() {
   document.documentElement.style.setProperty('--vh', `${window.innerHeight/100}px`);
 }
 
-window.addEventListener('resize', throttle(setDocHeight));
-window.addEventListener('orientationchange',throttle(setDocHeight));
+// window.addEventListener('resize', throttle(setDocHeight));
+// window.addEventListener('orientationchange',throttle(setDocHeight));
 addLoadEvent(OnStartUp);
 addLoadEvent(setDocHeight);
