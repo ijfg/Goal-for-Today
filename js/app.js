@@ -62,9 +62,9 @@ function createCard (idDate) {
   checkAchievements(idDate);
 };
 
-function performActionG(idDate, objG, objGState, dGnew, dGlist) {
+function performActionG(idDate, objG, objGState) {
   // Get newly input goal value
-  let newGoal = document.getElementById(dGnew).value;
+  let newGoal = document.getElementById(idDate + 'gnew').value;
   // Identify ordered list number
   const key = Object.keys(objG).length + 1;
   // Save goal with number into js object
@@ -93,9 +93,9 @@ function performActionG(idDate, objG, objGState, dGnew, dGlist) {
     localStorage.setItem(idDate + 'GS',JSON.stringify(objGState));
   });
   // Append the new item to the list
-  document.getElementById(dGlist).appendChild(liCurrent);
+  document.getElementById(idDate + 'glist').appendChild(liCurrent);
   // Clear input field
-  document.getElementById(dGnew).value = '';
+  document.getElementById(idDate + 'gnew').value = '';
   // Prevent the default refresh action of input form
   event.preventDefault();
 };
@@ -135,8 +135,6 @@ function turnToId (d) {
 function checkGoals(idDate){
   let objG = {};
   let objGState = {};
-  const dGlist = idDate + 'glist';
-  const dGnew = idDate + 'gnew';
   if(localStorage.getItem(idDate + 'G')){
     objG = JSON.parse(localStorage.getItem(idDate + 'G'));
     console.log(objG);
@@ -158,7 +156,7 @@ function checkGoals(idDate){
         objGState[goal] = !objGState[goal];
         localStorage.setItem(idDate + 'GS',JSON.stringify(objGState));
       });
-      document.getElementById(dGlist).appendChild(liSet);
+      document.getElementById(idDate + 'glist').appendChild(liSet);
     };
   };
   // Setup goal reset button
@@ -167,7 +165,7 @@ function checkGoals(idDate){
     console.log("Reset click is working!");
     objG = {};
     objGState = {};
-    document.getElementById(dGlist).innerHTML = "";
+    document.getElementById(idDate + 'glist').innerHTML = "";
     localStorage.setItem(idDate + 'G',JSON.stringify(objG));
     localStorage.setItem(idDate + 'GS',JSON.stringify(objGState));
   });
@@ -175,8 +173,8 @@ function checkGoals(idDate){
   document.getElementById(idDate + 'gAdd').addEventListener('click', (e) => {
     addCard(idDate)}, {once: true});
   // Setup input field
-  document.getElementById(dGnew).addEventListener('change', (e) => {
-    performActionG(idDate, objG, objGState, dGnew, dGlist)});
+  document.getElementById(idDate + 'gnew').addEventListener('change', (e) => {
+    performActionG(idDate, objG, objGState)});
 };
   
 function addCard(idDate) {
@@ -209,8 +207,6 @@ function addCard(idDate) {
 function checkAchievements(idDate){
   let objA = {};
   let objAState = {}; // For adding stars state
-  const dAlist = idDate + 'alist';
-  const dAnew = idDate + 'anew';
   if(localStorage.getItem(idDate + 'A')){
     objA = JSON.parse(localStorage.getItem(idDate + 'A'));
     for (const achievment of Object.values(objA)) {
@@ -219,22 +215,21 @@ function checkAchievements(idDate){
       document.getElementById(idDate + 'alist').appendChild(achiSet);
     };
   };
-  document.getElementById(dAnew).addEventListener('change', function(e) {
-    performActionA(idDate, objA, objAState, dAnew, dAlist)});
+  document.getElementById(idDate + 'anew').addEventListener('change', function(e) {
+    performActionA(idDate, objA, objAState)});
 };
 
-
-function performActionA(idDate, objA, objAState, dAnew, dAlist) {
+function performActionA(idDate, objA, objAState) {
   // Get newly input achievement value
-  let newAchi = document.getElementById(dAnew).value;
+  let newAchi = document.getElementById(idDate + 'anew').value;
   const key = Object.keys(objA).length + 1;
   objA[key] = newAchi;
   localStorage.setItem(idDate + 'A',JSON.stringify(objA));
   const achiObj = JSON.parse(localStorage.getItem(idDate + 'A'));
   const achiCurrent = document.createElement('li');
   achiCurrent.textContent = achiObj[key];
-  document.getElementById(dAlist).appendChild(achiCurrent);
-  document.getElementById(dAnew).value = '';
+  document.getElementById(idDate + 'alist').appendChild(achiCurrent);
+  document.getElementById(idDate + 'anew').value = '';
   event.preventDefault();
 };
 
