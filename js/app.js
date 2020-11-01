@@ -1,7 +1,7 @@
-function createCard (d) {
-  const month = d.getMonth() + 1;
-  const idDate = month.toString() + d.getDate().toString() + d.getFullYear().toString();
-  const displayDate = month +'-'+ d.getDate()+'-'+ d.getFullYear();
+function createCard (idDate) {
+  // const month = d.getMonth() + 1;
+  // const idDate = month.toString() + d.getDate().toString() + d.getFullYear().toString();
+  // const displayDate = month +'-'+ d.getDate()+'-'+ d.getFullYear();
   const sectionOutter = document.createElement('section');
   sectionOutter.setAttribute('class', 'outter');
   sectionOutter.setAttribute('id', idDate + 'out');
@@ -12,7 +12,7 @@ function createCard (d) {
   <div class="card">
     <div class="cardcard goal">
       <div class="date">
-        <h4 id="${idDate}gdate">${displayDate}</h4>
+        <h4 id="${idDate}gdate">${idDate}</h4>
       </div>
       <div class="main">
         <form onsubmit="return false">
@@ -30,7 +30,7 @@ function createCard (d) {
     </div>
     <div class="cardcard achi">
       <div class="date">
-        <h4 id="${idDate}adate">${displayDate}</h4>
+        <h4 id="${idDate}adate">${idDate}</h4>
       </div>
       <div class="main">
         <form onsubmit="return false">
@@ -58,7 +58,7 @@ function createCard (d) {
   document.getElementById(idDate + 'aFlip').addEventListener('click', (e) => {
     document.getElementById(idDate + 'sec').classList.toggle('flip');
   });
-  checkGoals(d, idDate);
+  checkGoals(idDate);
   checkAchievements(idDate);
 };
 
@@ -102,10 +102,37 @@ function performActionG(idDate, objG, objGState, dGnew, dGlist) {
 
 function OnStartUp(){
   let d = new Date();
-  createCard(d);
+  console.log(d);
+  // let month = d.getMonth() + 1;
+  // if (month < 10) {
+  //   month = '0' + month;
+  // }
+  // let date = d.getDate();
+  // if (date < 10) {
+  //   date = '0' + date;
+  // }
+  // // const idDate = month.toString() + date.toString() + d.getFullYear().toString();
+  // const idDate = d.getFullYear().toString() + "-" + month.toString() + "-" +  date.toString();
+  const idDate = turnToId(d);
+  createCard(idDate);
 };
 
-function checkGoals(d, idDate){
+function turnToId (d) {
+  let month = d.getMonth() + 1;
+  if (month < 10) {
+    month = '0' + month;
+  }
+  let date = d.getDate();
+  if (date < 10) {
+    date = '0' + date;
+  }
+  const idDate = d.getFullYear().toString() + "-" + month.toString() + "-" +  date.toString();
+  return idDate;
+}
+
+// Tutorial of using local storage: https://developer.mozilla.org/en-US/docs/Web
+// /API/Web_Storage_API/Using_the_Web_Storage_API
+function checkGoals(idDate){
   let objG = {};
   let objGState = {};
   const dGlist = idDate + 'glist';
@@ -145,31 +172,35 @@ function checkGoals(d, idDate){
     localStorage.setItem(idDate + 'GS',JSON.stringify(objGState));
   });
   // Setup add card button
-  const dGAdd = idDate + 'gAdd';
-  document.getElementById(dGAdd).addEventListener('click', (e) => {
-    addCard(d, dGAdd)}, {once: true});
+  document.getElementById(idDate + 'gAdd').addEventListener('click', (e) => {
+    addCard(idDate)}, {once: true});
   // Setup input field
   document.getElementById(dGnew).addEventListener('change', (e) => {
     performActionG(idDate, objG, objGState, dGnew, dGlist)});
 };
   
-function addCard(d, dGAdd) {
+function addCard(idDate) {
   setDocHeight(); // both mobile safari and chrome ok, but with a mild 
   // throttle(setDocHeight); // mobile chrome: no / safari: ok
   console.log("Add click is working!");
-  let nextD = d;
-  nextD.setDate(nextD.getDate() + 1);
-  createCard(nextD)
-  // Scroll to the newly created cards
-  const m = nextD.getMonth() + 1;
-  const idD = m.toString() + nextD.getDate().toString() + nextD.getFullYear().toString();
-  const scrollEle = document.getElementById(idD + 'out');
-  // scrollEle.scrollIntoView({behavior: "smooth"});
-  const scrollDis = document.getElementById(idD + 'out').getBoundingClientRect().top;
-  console.log("Distance to viewport top: " + scrollDis);
+  // Setting up date object for tomorrow
+  let dataDate = idDate.split('-');
+  let nextDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
+  nextDate = new Date(nextDate.setDate(nextDate.getDate() + 1));
+  // Create id from object
+  const nextDId = turnToId(nextDate);
+  // Use id to create card
+  createCard(nextDId);
+  // // Scroll to the newly created cards
+  // const m = nextDate.getMonth() + 1;
+  // const idD = m.toString() + nextDate.getDate().toString() + nextDate.getFullYear().toString();
+  // const scrollEle = document.getElementById(idD + 'out');
+  // // scrollEle.scrollIntoView({behavior: "smooth"});
+  // const scrollDis = document.getElementById(idD + 'out').getBoundingClientRect().top;
+  // console.log("Distance to viewport top: " + scrollDis);
   // scrollToSection(scrollEle, scrollDis);
-  document.getElementById(dGAdd).classList.toggle('fasd');
-  document.getElementById(dGAdd).classList.toggle('fasr');
+  document.getElementById(idDate + 'gAdd').classList.toggle('fasd');
+  document.getElementById(idDate + 'gAdd').classList.toggle('fasr');
   // document.getElementById(dGAdd).removeEventListener('click', (e) => {
   //   addCard(dGAdd)});
   // console.log("addcard listner removed");
@@ -306,7 +337,23 @@ function setDocHeight() {
   document.documentElement.style.setProperty('--vh', `${window.innerHeight/100}px`);
 }
 
+function listOldCards() {
+  const keys = Object.keys(localStorage);
+  const values = Object.values(localStorage);
+  // console.log(keys);
+  // console.log(values);
+  for (let key of keys) {
+    if (key.indexOf('G') !== -1) {
+      if (key.indexOf('S') == -1) {
+        key = key.replace('G', '');
+        console.log(key);
+      }
+    }
+  }
+}
+
 // window.addEventListener('resize', throttle(setDocHeight));
 // window.addEventListener('orientationchange',throttle(setDocHeight));
 addLoadEvent(OnStartUp);
 addLoadEvent(setDocHeight);
+addLoadEvent(listOldCards);
