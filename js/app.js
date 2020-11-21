@@ -1,4 +1,4 @@
-function createCard (idDate) {
+ function createCard (idDate, callback = () => {}) {
   // const month = d.getMonth() + 1;
   // const idDate = month.toString() + d.getDate().toString() + d.getFullYear().toString();
   // const displayDate = month +'-'+ d.getDate()+'-'+ d.getFullYear();
@@ -25,7 +25,7 @@ function createCard (idDate) {
       <footer>
         <i class="fas fasd fa-redo" id="${idDate}gReset" title="Reset card"></i>
         <i class="fas fasd fa-chevron-right" id="${idDate}gFlip"></i>
-        <i class="fas fasd fa-plus" id="${idDate}gAdd" title="Create card for tomorrow"></i>
+        <i class="fas fasr fa-plus" id="${idDate}gAdd"></i>
       </footer>
     </div>
     <div class="cardcard achi">
@@ -60,6 +60,7 @@ function createCard (idDate) {
   });
   checkGoals(idDate);
   checkAchievements(idDate);
+  callback();
 };
 
 function performActionG(idDate, objG, objGState) {
@@ -100,21 +101,15 @@ function performActionG(idDate, objG, objGState) {
   event.preventDefault();
 };
 
-function OnStartUp(){
+// Show today's card
+function onStartUp(){
   let d = new Date();
   console.log(d);
-  // let month = d.getMonth() + 1;
-  // if (month < 10) {
-  //   month = '0' + month;
-  // }
-  // let date = d.getDate();
-  // if (date < 10) {
-  //   date = '0' + date;
-  // }
-  // // const idDate = month.toString() + date.toString() + d.getFullYear().toString();
-  // const idDate = d.getFullYear().toString() + "-" + month.toString() + "-" +  date.toString();
   const idDate = turnToId(d);
-  createCard(idDate);
+  const tdCard = document.getElementById(idDate + 'out');
+  if (!tdCard) {
+    createCard(idDate);
+  }
 };
 
 function turnToId (d) {
@@ -160,8 +155,7 @@ function checkGoals(idDate){
     };
   };
   // Setup goal reset button
-  const dGReset = idDate + 'gReset';
-  document.getElementById(dGReset).addEventListener('click', (e) => {
+  document.getElementById(idDate + 'gReset').addEventListener('click', (e) => {
     console.log("Reset click is working!");
     objG = {};
     objGState = {};
@@ -169,26 +163,48 @@ function checkGoals(idDate){
     localStorage.setItem(idDate + 'G',JSON.stringify(objG));
     localStorage.setItem(idDate + 'GS',JSON.stringify(objGState));
   });
-  // Setup add card button
-  document.getElementById(idDate + 'gAdd').addEventListener('click', (e) => {
-    addCard(idDate)}, {once: true});
+  // // Setup add card button for today's card
+  // const today = new Date();
+  // const todayID = turnToId(today)
+  // const tmrwID = getNextDId(idDate);
+  // console.log('tmrwID: ' + tmrwID);
+  // const tmrwEl = document.getElementById(tmrwID + 'out');
+  // console.log('tmrwEl: ' + tmrwEl);
+  // if (idDate === todayID && !tmrwEl) {
+  //   document.getElementById(idDate + 'gAdd').classList.toggle('fasd');
+  //   document.getElementById(idDate + 'gAdd').classList.toggle('fasr');
+  //   // document.getElementById(idDate + 'gAdd').setAttribute('title', 'Create card for tomorrow')
+  //   document.getElementById(idDate + 'gAdd').addEventListener('click', (e) => {
+  //     addNextDayCard(idDate)}, {once: true});
+  // }
   // Setup input field
   document.getElementById(idDate + 'gnew').addEventListener('change', (e) => {
     performActionG(idDate, objG, objGState)});
 };
-  
-function addCard(idDate) {
-  setDocHeight(); // both mobile safari and chrome ok, but with a mild 
-  // throttle(setDocHeight); // mobile chrome: no / safari: ok
-  console.log("Add click is working!");
-  // Setting up date object for tomorrow
+
+function getNextDId(idDate) {
   let dataDate = idDate.split('-');
   let nextDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
   nextDate = new Date(nextDate.setDate(nextDate.getDate() + 1));
-  // Create id from object
   const nextDId = turnToId(nextDate);
+  return nextDId;
+}
+  
+function addNextDayCard(idDate) {
+  setDocHeight(); // both mobile safari and chrome ok, but with a mild 
+  // throttle(setDocHeight); // mobile chrome: no / safari: ok
+  console.log("Add click is working!");
+  document.getElementById(idDate + 'gAdd').classList.toggle('fasd');
+  document.getElementById(idDate + 'gAdd').classList.toggle('fasr');
+  // Setting up date object for tomorrow
+  // let dataDate = idDate.split('-');
+  // let nextDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
+  // nextDate = new Date(nextDate.setDate(nextDate.getDate() + 1));
+  // Create id from object
+  // const nextDId = turnToId(nextDate);
   // Use id to create card
-  createCard(nextDId);
+  const nDId = getNextDId(idDate);
+  createCard(nDId, setAddButton);
   // // Scroll to the newly created cards
   // const m = nextDate.getMonth() + 1;
   // const idD = m.toString() + nextDate.getDate().toString() + nextDate.getFullYear().toString();
@@ -197,11 +213,11 @@ function addCard(idDate) {
   // const scrollDis = document.getElementById(idD + 'out').getBoundingClientRect().top;
   // console.log("Distance to viewport top: " + scrollDis);
   // scrollToSection(scrollEle, scrollDis);
-  document.getElementById(idDate + 'gAdd').classList.toggle('fasd');
-  document.getElementById(idDate + 'gAdd').classList.toggle('fasr');
+  // document.getElementById(idDate + 'gAdd').classList.toggle('fasd');
+  // document.getElementById(idDate + 'gAdd').classList.toggle('fasr');
   // document.getElementById(dGAdd).removeEventListener('click', (e) => {
-  //   addCard(dGAdd)});
-  // console.log("addcard listner removed");
+  //   addNextDayCard(dGAdd)});
+  // console.log("addNextDayCard listner removed");
 };
 
 function checkAchievements(idDate){
@@ -332,23 +348,50 @@ function setDocHeight() {
   document.documentElement.style.setProperty('--vh', `${window.innerHeight/100}px`);
 }
 
-function listOldCards() {
+function listAllCards(callback) {
   const keys = Object.keys(localStorage);
-  const values = Object.values(localStorage);
-  // console.log(keys);
-  // console.log(values);
-  for (let key of keys) {
-    if (key.indexOf('G') !== -1) {
-      if (key.indexOf('S') == -1) {
+  // const values = Object.values(localStorage);
+  if (keys != 0) {
+    console.log("Old cards exist!");
+    for (let key of keys) {
+      if (key.indexOf('G') !== -1 && key.indexOf('GS') == -1 && key.indexOf('AS') == -1) {
         key = key.replace('G', '');
-        console.log(key);
+        createCard(key);
       }
     }
+  } else {
+    console.log("There is no old card");
   }
+  onStartUp();
+  callback();
 }
+
+function setAddButton(){
+  const cards = document.querySelectorAll('section')
+  const lastCard = cards[cards.length - 1];
+  let lastCardId = lastCard.getAttribute('id');
+  lastCardId = lastCardId.replace('out', '');
+  document.getElementById(lastCardId + 'gAdd').classList.toggle('fasd');
+  document.getElementById(lastCardId + 'gAdd').classList.toggle('fasr');
+  document.getElementById(lastCardId + 'gAdd').setAttribute('title', 'Create card for tomorrow')
+  document.getElementById(lastCardId + 'gAdd').addEventListener('click', (e) => {
+  addNextDayCard(lastCardId)}, {once: true});
+}
+
+// function updateKey() {
+//   const keys = Object.keys(localStorage);
+//   for (let key of keys) {
+//     if (key.indexOf('GS') !== -1) {
+//       if (key.length == 9) {
+//         const newKey = key.slice(3,7) + '-' + key.slice(0,2) + '-0' + key.slice(2,3) + key.slice(7,9);
+//         const keyValue = localStorage.getItem(key);
+//         localStorage.setItem(newKey,keyValue)
+//       } 
+//   }
+// }
 
 // window.addEventListener('resize', throttle(setDocHeight));
 // window.addEventListener('orientationchange',throttle(setDocHeight));
-addLoadEvent(OnStartUp);
+addLoadEvent(listAllCards(setAddButton));
+// addLoadEvent(OnStartUp);
 addLoadEvent(setDocHeight);
-addLoadEvent(listOldCards);
