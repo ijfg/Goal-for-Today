@@ -349,7 +349,9 @@ function setDocHeight() {
 }
 
 function listAllCards(callback) {
-  const keys = Object.keys(localStorage);
+  let keys = Object.keys(localStorage);
+  keys.sort();
+  console.log(keys);
   // const values = Object.values(localStorage);
   if (keys != 0) {
     console.log("Old cards exist!");
