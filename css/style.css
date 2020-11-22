@@ -101,8 +101,16 @@ footer {
   justify-content: space-between;
 }
 
-.achi footer {
+/* .achi footer {
   justify-content: center;
+} */
+
+.empty {
+  color: white;
+}
+
+.grey {
+  color: lightgrey;
 }
 
 .fasd {
@@ -111,7 +119,6 @@ footer {
   width: 17px;
   height: 17px;
   line-height: 17px;
-  color: lightgrey;
   padding: 15px;
   margin: 10px;
   border-radius: 50%;

@@ -23,9 +23,9 @@
         <ol id="${idDate}glist"></ol>
       </div>
       <footer>
-        <i class="fas fasd fa-undo" id="${idDate}gUndo" title="Undo"></i>
-        <i class="fas fasd fa-chevron-right" id="${idDate}gFlip"></i>
-        <i class="fas fasr fa-plus" id="${idDate}gAdd"></i>
+        <i class="fas fasd fa-undo grey" id="${idDate}gUndo" title="Undo"></i>
+        <i class="fas fasd fa-chevron-right grey" id="${idDate}gFlip"></i>
+        <i class="fas fasr fa-plus grey" id="${idDate}gAdd"></i>
       </footer>
     </div>
     <div class="cardcard achi">
@@ -41,7 +41,9 @@
         <ol id="${idDate}alist"></ol>
       </div>
       <footer>
-      <i class="fas fasd fa-chevron-left" id="${idDate}aFlip"></i>
+      <i class="fas fasd fa-undo grey" id="${idDate}aUndo" title="Undo"></i>
+      <i class="fas fasd fa-chevron-left grey" id="${idDate}aFlip"></i>
+      <i class="fas fasd fa-plus empty"></i>
     </footer>
     </div>
   </div>
@@ -255,6 +257,28 @@ function checkAchievements(idDate){
   };
   document.getElementById(idDate + 'anew').addEventListener('change', function(e) {
     performActionA(idDate, objA, objAState)});
+  // Setup undo button
+  document.getElementById(idDate + 'aUndo').addEventListener('click', (e) => {
+    console.log("Undo click is working!");
+    // Update js object
+    const lastKey = Object.keys(objA).length;
+    const lastValue = objA[lastKey];
+    console.log("Object.keys(objA): " + Object.keys(objA));
+    // console.log("Object.values(objA): " + Object.values(objA));
+    // console.log("objAState: " + objAState);
+    console.log("lastKey: " + lastKey);
+    console.log("lastValue: " + lastValue);
+    // console.log("objAState[lastValue]: " + objAState[lastValue]);
+    console.log("obA[lastKey]: " + objA[lastKey]);
+    // delete objAState[lastValue]; // deleted by key, not index
+    delete objA[lastKey];
+    // Sync js object with local localStorage
+    localStorage.setItem(idDate + 'A',JSON.stringify(objA));
+    // localStorage.setItem(idDate + 'AS',JSON.stringify(objGState));
+    // Update DOM
+    const olList = document.getElementById(idDate + 'alist');
+    olList.removeChild(olList.lastElementChild);
+  });
 };
 
 function performActionA(idDate, objA, objAState) {
