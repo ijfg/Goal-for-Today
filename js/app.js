@@ -301,7 +301,7 @@ function checkAchievements(idDate){
     delete objA[lastKey];
     // Sync js object with local localStorage
     localStorage.setItem(idDate + 'A',JSON.stringify(objA));
-    // localStorage.setItem(idDate + 'AS',JSON.stringify(objGState));
+    localStorage.setItem(idDate + 'AS',JSON.stringify(objAState));
     // Update DOM
     const olList = document.getElementById(idDate + 'alist');
     olList.removeChild(olList.lastElementChild);
