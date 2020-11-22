@@ -249,14 +249,41 @@ function checkAchievements(idDate){
   let objAState = {}; // For adding stars state
   if(localStorage.getItem(idDate + 'A')){
     objA = JSON.parse(localStorage.getItem(idDate + 'A'));
-    for (const achievment of Object.values(objA)) {
-      const achiSet = document.createElement('li');
-      achiSet.textContent = achievment;
+    objAState = JSON.parse(localStorage.getItem(idDate + 'AS'));
+    for (const achievement of Object.values(objA)) {
+      let achiSet = document.createElement('li');
+      achiSet.textContent = achievement;
+      if (objAState[achievement]) {
+        achiSet.innerHTML += "  &#128077;";
+      };
+      // Prevent double-clicking word selection
+      achiSet.addEventListener('mousedown',(e) => {
+        if (e.detail> 1) {
+          e.preventDefault();
+        };
+      });
+    // Double click to thumbs up item
+    achiSet.addEventListener('dblclick', (e) => {
+      console.log('achi dblclick is working!');
+      let achiSText = e.target.innerHTML;
+      console.log(achiSText);
+      console.log(achiSText.length);
+      const twoSpace = '  ';
+      const thumbsup = "  &#128077;";
+      console.log(achiSText.includes(twoSpace));
+      if (achiSText.includes(twoSpace)) {
+        e.target.innerHTML = e.target.innerHTML.slice(0, -4);
+        // e.target.innerHTML = e.target.innerHTML - thumbsup;
+      } else {
+        e.target.innerHTML += thumbsup;
+      }
+      // Add thumbs up state to local storage
+      objAState[achievement] = !objAState[achievement];
+      localStorage.setItem(idDate + 'AS',JSON.stringify(objAState));
+    });
       document.getElementById(idDate + 'alist').appendChild(achiSet);
     };
   };
-  document.getElementById(idDate + 'anew').addEventListener('change', function(e) {
-    performActionA(idDate, objA, objAState)});
   // Setup undo button
   document.getElementById(idDate + 'aUndo').addEventListener('click', (e) => {
     console.log("Undo click is working!");
@@ -264,13 +291,13 @@ function checkAchievements(idDate){
     const lastKey = Object.keys(objA).length;
     const lastValue = objA[lastKey];
     console.log("Object.keys(objA): " + Object.keys(objA));
-    // console.log("Object.values(objA): " + Object.values(objA));
-    // console.log("objAState: " + objAState);
+    console.log("Object.values(objA): " + Object.values(objA));
+    console.log("objAState: " + objAState);
     console.log("lastKey: " + lastKey);
     console.log("lastValue: " + lastValue);
-    // console.log("objAState[lastValue]: " + objAState[lastValue]);
+    console.log("objAState[lastValue]: " + objAState[lastValue]);
     console.log("obA[lastKey]: " + objA[lastKey]);
-    // delete objAState[lastValue]; // deleted by key, not index
+    delete objAState[lastValue]; // deleted by key, not index
     delete objA[lastKey];
     // Sync js object with local localStorage
     localStorage.setItem(idDate + 'A',JSON.stringify(objA));
@@ -279,17 +306,45 @@ function checkAchievements(idDate){
     const olList = document.getElementById(idDate + 'alist');
     olList.removeChild(olList.lastElementChild);
   });
+  document.getElementById(idDate + 'anew').addEventListener('change', function(e) {
+    performActionA(idDate, objA, objAState)});
 };
 
 function performActionA(idDate, objA, objAState) {
   // Get newly input achievement value
   let newAchi = document.getElementById(idDate + 'anew').value;
+  // Identify ordered list number
   const key = Object.keys(objA).length + 1;
+  // Save goal with number into js object
   objA[key] = newAchi;
+  // Set thumbs up state into js object
+  objAState[newAchi] = false;
+  // Sync local storage with updated objects
   localStorage.setItem(idDate + 'A',JSON.stringify(objA));
+  localStorage.setItem(idDate + 'AS', JSON.stringify(objAState));
+  // Update to DOM from data in local storage
   const achiObj = JSON.parse(localStorage.getItem(idDate + 'A'));
   const achiCurrent = document.createElement('li');
   achiCurrent.textContent = achiObj[key];
+  // Prevent double-clicking word selection
+  achiCurrent.addEventListener('mousedown',(e) => {
+    if (e.detail> 1) {
+      e.preventDefault();
+    };
+  });
+  // Double click to thumbs up item
+  achiCurrent.addEventListener('dblclick', (e) => {
+    console.log('achi dblclick is working!');
+    let achiCText = e.target.innerHTML;
+      if (achiCText.includes('  &#128077;')) {
+        e.target.innerHTML -= "  &#128077;";
+      } else {
+        e.target.innerHTML += "  &#128077;";
+      }
+    // Add thumbs up state to local storage
+    objAState[achiObj[key]] = !objAState[achiObj[key]];
+    localStorage.setItem(idDate + 'AS',JSON.stringify(objAState));
+  });
   document.getElementById(idDate + 'alist').appendChild(achiCurrent);
   document.getElementById(idDate + 'anew').value = '';
   event.preventDefault();
