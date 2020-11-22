@@ -23,7 +23,7 @@
         <ol id="${idDate}glist"></ol>
       </div>
       <footer>
-        <i class="fas fasd fa-redo" id="${idDate}gReset" title="Reset card"></i>
+        <i class="fas fasd fa-undo" id="${idDate}gUndo" title="Undo"></i>
         <i class="fas fasd fa-chevron-right" id="${idDate}gFlip"></i>
         <i class="fas fasr fa-plus" id="${idDate}gAdd"></i>
       </footer>
@@ -154,15 +154,37 @@ function checkGoals(idDate){
       document.getElementById(idDate + 'glist').appendChild(liSet);
     };
   };
-  // Setup goal reset button
-  document.getElementById(idDate + 'gReset').addEventListener('click', (e) => {
-    console.log("Reset click is working!");
-    objG = {};
-    objGState = {};
-    document.getElementById(idDate + 'glist').innerHTML = "";
+  // Setup undo button
+  document.getElementById(idDate + 'gUndo').addEventListener('click', (e) => {
+    console.log("Undo click is working!");
+    // Update js object
+    const lastKey = Object.keys(objG).length;
+    const lastValue = objG[lastKey];
+    console.log("Object.keys(objG): " + Object.keys(objG));
+    console.log("Object.values(objG): " + Object.values(objG));
+    console.log("objGState: " + objGState);
+    console.log("lastKey: " + lastKey);
+    console.log("lastValue: " + lastValue);
+    console.log("objGState[lastValue]: " + objGState[lastValue]);
+    console.log("objG[lastKey]: " + objG[lastKey]);
+    delete objGState[lastValue]; // deleted by key, not index
+    delete objG[lastKey];
+    // Sync js object with local localStorage
     localStorage.setItem(idDate + 'G',JSON.stringify(objG));
     localStorage.setItem(idDate + 'GS',JSON.stringify(objGState));
+    // Update DOM
+    const olList = document.getElementById(idDate + 'glist');
+    olList.removeChild(olList.lastElementChild);
   });
+  // // Setup goal reset button
+  // document.getElementById(idDate + 'gReset').addEventListener('click', (e) => {
+  //   console.log("Reset click is working!");
+  //   objG = {};
+  //   objGState = {};
+  //   document.getElementById(idDate + 'glist').innerHTML = "";
+  //   localStorage.setItem(idDate + 'G',JSON.stringify(objG));
+  //   localStorage.setItem(idDate + 'GS',JSON.stringify(objGState));
+  // });
   // // Setup add card button for today's card
   // const today = new Date();
   // const todayID = turnToId(today)
