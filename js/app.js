@@ -336,10 +336,12 @@ function performActionA(idDate, objA, objAState) {
   achiCurrent.addEventListener('dblclick', (e) => {
     console.log('achi dblclick is working!');
     let achiCText = e.target.innerHTML;
-      if (achiCText.includes('  &#128077;')) {
-        e.target.innerHTML -= "  &#128077;";
+    const twoSpace = '  ';
+    const thumbsup = "  &#128077;";
+      if (achiCText.includes(twoSpace)) {
+        e.target.innerHTML = e.target.innerHTML.slice(0, -4);
       } else {
-        e.target.innerHTML += "  &#128077;";
+        e.target.innerHTML += thumbsup;
       }
     // Add thumbs up state to local storage
     objAState[achiObj[key]] = !objAState[achiObj[key]];
