@@ -156,7 +156,7 @@ h4 {
   line-height: 1.5em;
 }
 
-h4:hover {
+.goal h4:hover {
   text-decoration: underline;
 }
 
