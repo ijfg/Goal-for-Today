@@ -148,11 +148,20 @@ footer {
 
 .date {
   text-align: right;
-  margin: 15px;
+  margin: 15px
 }
 
 h4 {
   font-weight: 300;
+  line-height: 1.5em;
+}
+
+h4:hover {
+  text-decoration: underline;
+}
+
+.invisible {
+  display: none;
 }
 
 .main {

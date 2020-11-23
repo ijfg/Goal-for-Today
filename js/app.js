@@ -12,7 +12,7 @@
   <div class="card">
     <div class="cardcard goal">
       <div class="date">
-        <h4 id="${idDate}gdate">${idDate}</h4>
+        <h4 id="${idDate}gdate" title="Single out">${idDate}</h4>
       </div>
       <div class="main">
         <form onsubmit="return false">
@@ -59,6 +59,24 @@
   // Flip back to front event listner
   document.getElementById(idDate + 'aFlip').addEventListener('click', (e) => {
     document.getElementById(idDate + 'sec').classList.toggle('flip');
+  });
+  // Single out function
+  document.getElementById(idDate + 'gdate').addEventListener('click', (e) => {
+    const cardClicked = document.getElementById(idDate + 'out');
+    cardClicked.classList.toggle('invisible');
+    let sections = document.querySelectorAll('section');
+    sections = Array.from(sections);
+    sections.forEach(function(section) {
+      section.classList.toggle('invisible');
+    })
+    const dateClicked = document.getElementById(idDate + 'gdate');
+    const cardTitle = dateClicked.getAttribute("title");
+    console.log(cardTitle.length);
+    if (cardTitle.length == 10) {
+      dateClicked.setAttribute("title", "Show all");
+    } else {
+      dateClicked.setAttribute("title", "Single out");
+    }
   });
   checkGoals(idDate);
   checkAchievements(idDate);
@@ -109,7 +127,9 @@ function onStartUp(){
   console.log(d);
   const idDate = turnToId(d);
   const tdCard = document.getElementById(idDate + 'out');
+  console.log("tdCard: " + !tdCard);
   if (!tdCard) {
+    console.log("Today's card doesn't exist yet!");
     createCard(idDate);
   }
 };
