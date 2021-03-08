@@ -12,7 +12,7 @@
   <div class="card">
     <div class="cardcard goal">
       <div class="date">
-        <h4 id="${idDate}gdate" title="Single out">${idDate}</h4>
+        <h4 id="${idDate}gdate" title="Show all">${idDate}</h4>
       </div>
       <div class="main">
         <form onsubmit="return false">
@@ -66,8 +66,8 @@
     cardClicked.classList.toggle('invisible');
     let sections = document.querySelectorAll('section');
     sections = Array.from(sections);
-    sections.forEach(function(section) {
-      section.classList.toggle('invisible');
+    sections.forEach(function(sec) {
+      sec.classList.toggle('invisible');
     })
     const dateClicked = document.getElementById(idDate + 'gdate');
     const cardTitle = dateClicked.getAttribute("title");
@@ -132,7 +132,18 @@ function onStartUp(){
     console.log("Today's card doesn't exist yet!");
     createCard(idDate);
   }
+  hideOldCards(idDate);
 };
+
+function hideOldCards(idDate) {
+  const todayC = document.getElementById(idDate + 'out');
+  todayC.classList.toggle('invisible');
+  let sections = document.querySelectorAll('section');
+  sections = Array.from(sections);
+  sections.forEach(function(sec) {
+    sec.classList.toggle('invisible');
+  })
+}
 
 function turnToId (d) {
   let month = d.getMonth() + 1;
