@@ -198,10 +198,12 @@ form {
 
 .goal ol li:hover {
   background-color: khaki;
+  cursor: pointer;
 }
 
 .achi ol li:hover {
   background-color: khaki;
+  cursor: pointer;
 }
 
 ol {
