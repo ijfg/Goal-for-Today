@@ -129,6 +129,7 @@ footer {
 .fasd:hover {
   background-color: khaki;
   color: black;
+  cursor: pointer;
 }
 
 .fasr {
@@ -158,6 +159,7 @@ h4 {
 
 .goal h4:hover {
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .invisible {
