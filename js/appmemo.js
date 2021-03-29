@@ -1,57 +1,57 @@
- function createCard (idDate, callback = () => {}) {
+function createCard (idDate, callback = () => {}) {
   // const month = d.getMonth() + 1;
   // const idDate = month.toString() + d.getDate().toString() + d.getFullYear().toString();
   // const displayDate = month +'-'+ d.getDate()+'-'+ d.getFullYear();
-  // const sectionOutter = document.createElement('section');
-  // sectionOutter.setAttribute('class', 'outter');
-  // sectionOutter.setAttribute('id', idDate + 'out');
-  // const section = document.createElement('div');
-  // section.setAttribute('class', 'container');
-  // section.setAttribute('id', idDate + 'sec');
-  // section.innerHTML = `
-  // <div class="card">
-  //   <div class="cardcard goal">
-  //     <div class="date">
-  //       <h4 id="${idDate}gdate" title="Show all">${idDate}</h4>
-  //     </div>
-  //     <div class="main">
-  //       <form onsubmit="return false">
-  //         <label>
-  //           <input id="${idDate}gnew" type="text" name="input" placeholder=" Goals">
-  //         </label>
-  //       </form>
-  //       <ol id="${idDate}glist"></ol>
-  //     </div>
-  //     <footer>
-  //       <i class="fas fasd fa-undo grey" id="${idDate}gUndo" title="Undo"></i>
-  //       <i class="fas fasd fa-chevron-right grey" id="${idDate}gFlip"></i>
-  //       <i class="fas fasr fa-plus grey" id="${idDate}gAdd"></i>
-  //     </footer>
-  //   </div>
-  //   <div class="cardcard achi">
-  //     <div class="date">
-  //       <h4 id="${idDate}adate">${idDate}</h4>
-  //     </div>
-  //     <div class="main">
-  //       <form onsubmit="return false">
-  //         <label>
-  //           <input id="${idDate}anew" type="text" name="input" placeholder=" Achievements">
-  //         </label>
-  //       </form>
-  //       <ol id="${idDate}alist"></ol>
-  //     </div>
-  //     <footer>
-  //     <i class="fas fasd fa-undo grey" id="${idDate}aUndo" title="Undo"></i>
-  //     <i class="fas fasd fa-chevron-left grey" id="${idDate}aFlip"></i>
-  //     <i class="fas fasd fa-plus empty"></i>
-  //   </footer>
-  //   </div>
-  // </div>
-  // `;
-  // sectionOutter.appendChild(section);
-  // // document.getElementById('snapcontainer').appendChild(sectionOutter);
-  // const scriptTag = document.getElementsByTagName('script')[0];
-  // document.body.insertBefore(sectionOutter, scriptTag);
+  const sectionOutter = document.createElement('section');
+  sectionOutter.setAttribute('class', 'outter');
+  sectionOutter.setAttribute('id', idDate + 'out');
+  const section = document.createElement('div');
+  section.setAttribute('class', 'container');
+  section.setAttribute('id', idDate + 'sec');
+  section.innerHTML = `
+  <div class="card">
+    <div class="cardcard goal">
+      <div class="date">
+        <h4 id="${idDate}gdate" title="Show all">${idDate}</h4>
+      </div>
+      <div class="main">
+        <form onsubmit="return false">
+          <label>
+            <input id="${idDate}gnew" type="text" name="input" placeholder=" Goals">
+          </label>
+        </form>
+        <ol id="${idDate}glist"></ol>
+      </div>
+      <footer>
+        <i class="fas fasd fa-undo grey" id="${idDate}gUndo" title="Undo"></i>
+        <i class="fas fasd fa-chevron-right grey" id="${idDate}gFlip"></i>
+        <i class="fas fasr fa-plus grey" id="${idDate}gAdd"></i>
+      </footer>
+    </div>
+    <div class="cardcard achi">
+      <div class="date">
+        <h4 id="${idDate}adate">${idDate}</h4>
+      </div>
+      <div class="main">
+        <form onsubmit="return false">
+          <label>
+            <input id="${idDate}anew" type="text" name="input" placeholder=" Achievements">
+          </label>
+        </form>
+        <ol id="${idDate}alist"></ol>
+      </div>
+      <footer>
+      <i class="fas fasd fa-undo grey" id="${idDate}aUndo" title="Undo"></i>
+      <i class="fas fasd fa-chevron-left grey" id="${idDate}aFlip"></i>
+      <i class="fas fasd fa-plus empty"></i>
+    </footer>
+    </div>
+  </div>
+  `;
+  sectionOutter.appendChild(section);
+  // document.getElementById('snapcontainer').appendChild(sectionOutter);
+  const scriptTag = document.getElementsByTagName('script')[0];
+  document.body.insertBefore(sectionOutter, scriptTag);
   // Flip front to back event listner
   document.getElementById(idDate + 'gFlip').addEventListener('click', (e) => {
     document.getElementById(idDate + 'sec').classList.toggle('flip');
@@ -125,71 +125,15 @@ function performActionG(idDate, objG, objGState) {
 function onStartUp(){
   let d = new Date();
   console.log(d);
-  const idToday = turnToId(d);
-  const dateBlanks = document.querySelectorAll('h4');
-  for (const blank of dateBlanks) {
-    blank.textContent = idToday;
+  const idDate = turnToId(d);
+  const tdCard = document.getElementById(idDate + 'out');
+  console.log("tdCard: " + !tdCard);
+  if (!tdCard) {
+    console.log("Today's card doesn't exist yet!");
+    createCard(idDate);
   }
-  prepCard(idToday);
+  hideOldCards(idDate);
 };
-
-function Todo(text){
-  this.text = text;
-  this.front = true;
-  this.done = false;
-}
-
-function Day(title){
-  this.title = title;
-  this.todos = [];
-
-  this.addTodo = function(text) {
-    let x = new Todo(text);
-    this.todos.push(x);
-    return x
-  }
-}
-
-function Record(title) {
-  this.title = title;
-  this.days = [];
-
-  this.addDay = function(title) {
-    let x = new Day(title);
-    this.days.push(x);
-    return x;
-  }
-}
-
-function prepCard(idDate) {
-  // Load history if exists
-  let objLS = JSON.parse(localStorage.getItem('days'));
-  let entries = objLS[idDate]['goals'];
-  for (const entry in entries) {
-
-  }
-  // handle new goal input
-  document.getElementById('gnew').addEventListener('change', (e) => {
-    let entryObj = {};
-    let newGoal = document.getElementById('gnew').value;
-    entryObj[text] = newGoal;
-    entryObjs[state] = false;
-  })
-
-  // handle new achievement input 
-
-  // Flip front to back event listner
-  document.getElementById('gFlip').addEventListener('click', (e) => {
-    document.getElementById('sec').classList.toggle('flip');
-  });
-  // Flip back to front event listner
-  document.getElementById('aFlip').addEventListener('click', (e) => {
-    document.getElementById('sec').classList.toggle('flip');
-  });
-  // display previous day card
-
-  // dispaly next day card or create card for tomorrow
-}
 
 function hideOldCards(idDate) {
   const todayC = document.getElementById(idDate + 'out');
@@ -265,6 +209,29 @@ function checkGoals(idDate){
     const olList = document.getElementById(idDate + 'glist');
     olList.removeChild(olList.lastElementChild);
   });
+  // // Setup goal reset button
+  // document.getElementById(idDate + 'gReset').addEventListener('click', (e) => {
+  //   console.log("Reset click is working!");
+  //   objG = {};
+  //   objGState = {};
+  //   document.getElementById(idDate + 'glist').innerHTML = "";
+  //   localStorage.setItem(idDate + 'G',JSON.stringify(objG));
+  //   localStorage.setItem(idDate + 'GS',JSON.stringify(objGState));
+  // });
+  // // Setup add card button for today's card
+  // const today = new Date();
+  // const todayID = turnToId(today)
+  // const tmrwID = getNextDId(idDate);
+  // console.log('tmrwID: ' + tmrwID);
+  // const tmrwEl = document.getElementById(tmrwID + 'out');
+  // console.log('tmrwEl: ' + tmrwEl);
+  // if (idDate === todayID && !tmrwEl) {
+  //   document.getElementById(idDate + 'gAdd').classList.toggle('fasd');
+  //   document.getElementById(idDate + 'gAdd').classList.toggle('fasr');
+  //   // document.getElementById(idDate + 'gAdd').setAttribute('title', 'Create card for tomorrow')
+  //   document.getElementById(idDate + 'gAdd').addEventListener('click', (e) => {
+  //     addNextDayCard(idDate)}, {once: true});
+  // }
   // Setup input field
   document.getElementById(idDate + 'gnew').addEventListener('change', (e) => {
     performActionG(idDate, objG, objGState)});
@@ -416,6 +383,79 @@ function performActionA(idDate, objA, objAState) {
   event.preventDefault();
 };
 
+// function prepareDotDisplay(idDate) {
+//   const ulHolder = document.createElement('div');
+//   ulHolder.classList.add('dotsUlHolder');
+//   ulHolder.setAttribute('id', idDate + 'dot');
+//   const ulDot = document.createElement('ul');
+//   ulDot.setAttribute('id', 'dotsHorizontal');
+//   let cardsHorizontal = document.querySelectorAll('.card');
+//   cardsHorizontal = Array.from(cardsHorizontal);
+//   for(const card of cardsHorizontal) {
+//     const idValue = card.getAttribute('id');
+//     const newDot = document.createElement('li');
+//     newDot.setAttribute('class', idValue );
+//     newDot.textContent = '.';
+//     ulDot.appendChild(newDot);
+//   };
+//   ulHolder.appendChild(ulDot);
+//   document.getElementById(idDate + 'G').appendChild(ulHolder);
+//   window.addEventListener('scroll', throttle(function(e){
+//     console.log("pageYOffset is working!");
+//     let y = window.pageYOffset;
+//     console.log(y);
+//     document.getElementById(idDate + 'dot').style.top = -y + 720 + "px";
+//     console.log(ulHolder.style.top);
+//     console.log(document.getElementById(idDate + 'dot').style.top);
+//   }))
+//   // document.body.appendChild(ulHolder);
+//   // const cardLoc = document.getElementById('cardMargin');
+//   // cardLoc.appendChild(ulHolder);
+// };
+
+// function isInViewport(elem) {
+//   let elemCheck = elem.getBoundingClientRect();
+//   console.log(`${elemCheck.left} / ${window.innerWidth}`);
+//   return (elemCheck.left + window.innerWidth / 2 >= 0 && elemCheck.left + window.innerWidth / 2< window.innerWidth);
+// };
+
+function position() {
+  // return el.scrollTop;
+  return document.documentElement.scrollTop ||
+  document.body.parentNode.scrollTop ||
+  document.body.scrollTop;
+};
+
+function move(ele, amount) {
+  document.documentElement.scrollTop = amount;
+  document.body.parentNode.scrollTop = amount;
+  document.body.scrollTop = amount;
+};
+
+Math.inOutQuintic = (t, b, c, d) => {
+var ts = (t/=d)*t,
+tc = ts*t;
+return b+c*(6*tc*ts + -15*ts*ts + 10*tc);
+};
+
+function scrollToSection(ele, distance) {
+  console.log("scrollToSection functioin starts!")
+  let beginPos = position();
+  console.log("begining position: " + beginPos);
+  let currentTime = 0;
+  let increment = 20;
+  let animateScroll = () => {
+    currentTime += increment;
+    let value = Math.inOutQuintic(currentTime, beginPos, distance, 600);
+    // value = Math.round(value);
+    move(ele, value);
+    if (currentTime < 600) {
+      window.requestAnimationFrame(animateScroll);
+    };
+  };
+  animateScroll();
+};
+
 function addLoadEvent(func){
   const oldonload = window.onload;
   if (typeof window.onload != "function") {
@@ -474,8 +514,20 @@ function setAddButton(){
   addNextDayCard(lastCardId)}, {once: true});
 }
 
-// addLoadEvent(listAllCards(setAddButton));
+// function updateKey() {
+//   const keys = Object.keys(localStorage);
+//   for (let key of keys) {
+//     if (key.indexOf('GS') !== -1) {
+//       if (key.length == 9) {
+//         const newKey = key.slice(3,7) + '-' + key.slice(0,2) + '-0' + key.slice(2,3) + key.slice(7,9);
+//         const keyValue = localStorage.getItem(key);
+//         localStorage.setItem(newKey,keyValue)
+//       } 
+//   }
+// }
 
-// addLoadEvent(setDocHeight);
-
-addLoadEvent(onStartUp);
+// window.addEventListener('resize', throttle(setDocHeight));
+// window.addEventListener('orientationchange',throttle(setDocHeight));
+addLoadEvent(listAllCards(setAddButton));
+// addLoadEvent(OnStartUp);
+addLoadEvent(setDocHeight);

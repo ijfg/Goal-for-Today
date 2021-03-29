@@ -9,7 +9,50 @@
     <link href="fontawesome/css/all.css" rel="stylesheet">
   </head>
   <body>
-    <!-- <main id="snapcontainer"></main> -->
-    <script src="js/app.js" type="text/javascript"></script>
+    <section class="outter" id="out">
+      <div class="container" id="sec">
+        <i class="fas mid fa-caret-left"></i>
+        <div class="card">
+          <div class="cardcard goal">
+            <div class="date">
+              <h4 id="gdate"></h4>
+            </div>
+            <div class="main">
+              <form onsubmit="return false">
+                <label>
+                  <input id="gnew" type="text" name="input" placeholder=" Goals">
+                </label>
+              </form>
+              <ol id="glist"></ol>
+            </div>
+            <footer>
+              <!-- <i class="fas fasd fa-undo grey" id="gUndo" title="Undo"></i> -->
+              <i class="fas fasd fa-chevron-right grey" id="gFlip"></i>
+              <!-- <i class="fas fasr fa-plus grey" id="gAdd"></i> -->
+            </footer>
+          </div>
+          <div class="cardcard achi">
+            <div class="date">
+              <h4 id="adate"></h4>
+            </div>
+            <div class="main">
+              <form onsubmit="return false">
+                <label>
+                  <input id="anew" type="text" name="input" placeholder=" Achievements">
+                </label>
+              </form>
+              <ol id="alist"></ol>
+            </div>
+            <footer>
+            <!-- <i class="fas fasd fa-undo grey" id="aUndo" title="Undo"></i> -->
+            <i class="fas fasd fa-chevron-left grey" id="aFlip"></i>
+            <!-- <i class="fas fasd fa-plus empty"></i> -->
+          </footer>
+          </div>
+        </div>
+        <i class="fas mid fa-caret-right"></i>
+      </div>
+    </section>
+    <script src="js/daycard.js" type="text/javascript"></script>
   </body>
 </html>

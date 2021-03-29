@@ -11,13 +11,8 @@ body {
   /* flex-direction: column; */
   height: calc(var(--vh, 1vh) * 100);
   /* overflow: hidden; */
-}
-
-#snapcontainer {
-  /* overflow: scroll; Somehow this conflict with scrollTop */ 
-  /* height: calc(var(--vh, 1vh) * 100);
-  scroll-snap-type: y mandatory;
-  align-items: center; */
+  align-items: center;
+  justify-content:center;
 }
 
 .outter {
@@ -98,7 +93,7 @@ footer {
   width: 100%;
   margin-top: auto;
   align-self: flex-end;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 /* .achi footer {
@@ -148,19 +143,42 @@ footer {
 }
 
 .date {
-  text-align: right;
-  margin: 15px
+  display: flex;
+  /* width: 100%; */
+  padding: 18px;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: flex-end;
+  /* text-align: center; */
+}
+
+.mid {
+  font-size: 21px;
+  vertical-align: middle;
+}
+
+.fa-caret-left {
+ font-size: 50px;
+ margin-right: 25px;
+ color: rgba(0, 0, 0, 0.4);
 }
 
 h4 {
   font-weight: 300;
   line-height: 1.5em;
+  vertical-align: bottom;
 }
 
-.goal h4:hover {
+.fa-caret-right {
+  font-size: 50px;
+  margin-left: 25px;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* .goal h4:hover {
   text-decoration: underline;
   cursor: pointer;
-}
+} */
 
 .invisible {
   display: none;
