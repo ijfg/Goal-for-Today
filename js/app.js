@@ -133,18 +133,18 @@ function onStartUp(){
   prepCard(idToday);
 };
 
-function Todo(text){
+function Entry(text){
   this.text = text;
   this.front = true;
   this.done = false;
 }
 
-function Day(title){
+function DayCard(title){
   this.title = title;
   this.todos = [];
 
   this.addTodo = function(text) {
-    let x = new Todo(text);
+    let x = new Entry(text);
     this.todos.push(x);
     return x
   }
@@ -163,9 +163,11 @@ function Record(title) {
 
 function prepCard(idDate) {
   // Load history if exists
-  let objLS = JSON.parse(localStorage.getItem('days'));
-  let entries = objLS[idDate]['goals'];
+  let objLS = JSON.parse(localStorage.getItem('daycards'));
+  let entries = objLS[idDate]['goals']['text'];
   for (const entry in entries) {
+    const liSet = document.createElement('li');
+    liSet.textContent = entry
 
   }
   // handle new goal input
@@ -224,22 +226,27 @@ function checkGoals(idDate){
     console.log(objG);
     objGState = JSON.parse(localStorage.getItem(idDate + 'GS'));
     for (const goal of Object.values(objG)) {
+      // Fill content
       const liSet = document.createElement('li');
       liSet.textContent = goal;
+      // Mark state
       if (objGState[goal]) {
         liSet.classList.toggle('crossOut');
       }
+      // Prevent default action
       liSet.addEventListener('mousedown',(e) => {
         if (e.detail> 1) {
           e.preventDefault();
         };
       });
+      // Activate doubleclick listener
       liSet.addEventListener('dblclick',(e) => {
-        console.log('dblclick is working!');
         e.target.classList.toggle('crossOut');
         objGState[goal] = !objGState[goal];
+        // Update state to LS
         localStorage.setItem(idDate + 'GS',JSON.stringify(objGState));
       });
+      // Append li to the right place in DOM
       document.getElementById(idDate + 'glist').appendChild(liSet);
     };
   };
