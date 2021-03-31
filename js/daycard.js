@@ -52,51 +52,78 @@ function onStartUp(){
   prepCard(idToday);
 };
 
+function DayCards() {
+  this.dayCards = JSON.parse(localStorage.getItem('daycards'));
+  this.saveToLocalStorage = function() {
+    localStorage.setItem('daycards', JSON.stringify(this.dayCards));
+  }
+}
+let dc = new DayCards();
+
 function prepCard(idDate) {
-  // If previous entries exist
-  if (localStorage.getItem('daycards')) {
-    let dataLS = JSON.parse(localStorage.getItem('daycards'));
-    if (dataLS[idDate]) {
-      let exEntries = dataLS[idDate];
-      for (let i = 0; i < exEntries.length; i++) {
-        const liSet = document.createElement('li');
-        // Load content
-        liSet.textContent = exEntries[i]['text'];
-        // Mark state
-        if (exEntries[i].isDone) {
-          liSet.classList.toggle('crossOut');
-        };
-        // Prevent default action
-        liSet.addEventListener('mousedown',(e) => {
-          if (e.detail> 1) {
-            e.preventDefault();
-          };
-        });
-        
-        // Activate doubleclick listener
-        liSet.addEventListener('dblclick',(e) => {
-          e.target.classList.toggle('crossOut');
-          let newLS = JSON.parse(localStorage.getItem('daycards'));
-          newLS[idDate][i].isDone = !newLS[idDate][i].isDone;
-          localStorage.setItem('daycards', JSON.stringify(newLS));
-        });
-        // If it's a goal, display on goal side
-        if (exEntries[i].isGoal) {
-          document.getElementById('glist').appendChild(liSet);
-        } else {
-          // If not, display on achievement side
-          document.getElementById('alist').appendChild(liSet);
-        }
+  prepCardContents(idDate, prepCardEventListeners);
+};
+
+function prepCardContents(idDate, afterLoad) {
+  if (dc.dayCards) {
+    if (dc.dayCards[idDate]) {
+      for (let i = 0; i < dc.dayCards[idDate].length; i++) {
+        renderEntry(dc.dayCards[idDate][i]);
       }
     } else {
-      dataLS[idDate] = [];
-      localStorage.setItem('daycards', JSON.stringify(dataLS));
+      // If the day's card doesn't exist
+      initCard(idDate);
     }
   } else {
-    let newObj = {};
-    newObj[idDate] = [];
-    localStorage.setItem('daycards', JSON.stringify(newObj));
+    // If no cards exist
+    initCards();
+    initCard(idDate);
   }
+
+  afterLoad(idDate);
+}
+
+function initCards() {
+  dc.dayCards = {};
+  dc.saveToLocalStorage();
+}
+
+function initCard(idDate) {
+  dc.dayCards[idDate] = [];
+  dc.saveToLocalStorage();
+}
+
+function renderEntry(entry) {
+  const liSet = document.createElement('li');
+  // Load content
+  liSet.textContent = entry['text'];
+  // Mark state
+  if (entry.isDone) {
+    liSet.classList.toggle('crossOut');
+  };
+  // Prevent default action
+  liSet.addEventListener('mousedown',(e) => {
+    if (e.detail> 1) {
+      e.preventDefault();
+    };
+  });
+  
+  // Activate doubleclick listener
+  liSet.addEventListener('dblclick',(e) => {
+    e.target.classList.toggle('crossOut');
+    entry.isDone = !entry.isDone;
+    dc.saveToLocalStorage();
+  });
+  // If it's a goal, display on goal side
+  if (entry.isGoal) {
+    document.getElementById('glist').appendChild(liSet);
+  } else {
+    // If not, display on achievement side
+    document.getElementById('alist').appendChild(liSet);
+  }
+}
+
+function prepCardEventListeners(idDate) {
   // Flip front to back event listner
   document.getElementById('gFlip').addEventListener('click', (e) => {
     document.getElementById('sec').classList.toggle('flip');
@@ -116,8 +143,7 @@ function prepCard(idDate) {
   const aInput = document.getElementById('anew');
   document.getElementById('anew').addEventListener('change', (e) => {
     inputHandler(aInput, idDate, false)});
-};
-     
+}
     
 function inputHandler(input, idDate, isGoal) {
   let dataLS = JSON.parse(localStorage.getItem('daycards'));
