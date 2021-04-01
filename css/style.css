@@ -93,7 +93,7 @@ footer {
   width: 100%;
   margin-top: auto;
   align-self: flex-end;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 /* .achi footer {
@@ -117,29 +117,14 @@ footer {
   padding: 15px;
   margin: 10px;
   border-radius: 50%;
-  transition: .4s;
-  font-size: 17px;
+  transition: .1s;
+  /* font-size: 16px; */
 }
 
 .fasd:hover {
   background-color: khaki;
   color: black;
   cursor: pointer;
-}
-
-.fasr {
-  display: inline-block;
-  text-align: center;
-  width: 17px;
-  height: 17px;
-  line-height: 17px;
-  color: lightgrey;
-  padding: 15px;
-  margin: 10px;
-  /* border: 1px solid black; */
-  border-radius: 50%;
-  transition: .4s;
-  font-size: 17px;
 }
 
 .date {
@@ -210,8 +195,9 @@ form {
   margin: 20px;
   font-size: 19px;
   /* text-transform: capitalize; */
-  transition: .4s;
+  transition: .1s;
   border-radius: 2.5px;
+  line-height: 25px;
 }
 
 .goal ol li:hover {
@@ -225,35 +211,8 @@ form {
 }
 
 ol {
-  text-align:left;
-  margin: 11% 13% 0 13%;
-}
-
-.dotsUlHolder, .dotsUlHolder ul{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  height: 25px;
-  /* must add height to make centering work */
-  margin: auto;
-  /* z-index: 1; */
-  position: fixed;
-  top: 720px;
-  left: 0;
-  /* bottom: 0; */
-  padding-bottom: 20px;
-  font-size: 35px;
-  letter-spacing: 5px;;
-  /* margin: 20px; */
-  font-weight: 900;
-  box-sizing: border-box;
-}
-
-.dotsUlHolder li, .dotsUlHolder ul {
-  list-style-type: none;
-  color: lightgrey;
+  text-align: left;
+  margin: 11% 10% 0 15%;
 }
 
 .crossOut {

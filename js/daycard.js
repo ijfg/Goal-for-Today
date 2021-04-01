@@ -4,6 +4,14 @@ function Entry (text, isGoal) {
   this.isDone = false;
 }
 
+function DayCards() {
+  this.dayCards = JSON.parse(localStorage.getItem('daycards'));
+  this.saveToLocalStorage = function() {
+    localStorage.setItem('daycards', JSON.stringify(this.dayCards));
+  }
+}
+let dc = new DayCards();
+
 function addLoadEvent(func){
   const oldonload = window.onload;
   if (typeof window.onload != "function") {
@@ -37,7 +45,6 @@ function getNextDId(idDate) {
   return nextDId;
 }
 
-// On startup
 function onStartUp(){
   // Create today's day ID
   let d = new Date();
@@ -52,13 +59,14 @@ function onStartUp(){
   prepCard(idToday);
 };
 
-function DayCards() {
-  this.dayCards = JSON.parse(localStorage.getItem('daycards'));
-  this.saveToLocalStorage = function() {
-    localStorage.setItem('daycards', JSON.stringify(this.dayCards));
-  }
-}
-let dc = new DayCards();
+
+// dc.dayCards[date][i].remove();
+// dc.saveToLocalStorage();
+// updateView();
+
+// item from i to j
+// item = dc.dayCards[date][i].remove
+// dc.dayCards[date][j].add(item)
 
 function prepCard(idDate) {
   prepCardContents(idDate, prepCardEventListeners);
@@ -102,18 +110,9 @@ function renderEntry(entry) {
     liSet.classList.toggle('crossOut');
   };
   // Prevent default action
-  liSet.addEventListener('mousedown',(e) => {
-    if (e.detail> 1) {
-      e.preventDefault();
-    };
-  });
-  
-  // Activate doubleclick listener
-  liSet.addEventListener('dblclick',(e) => {
-    e.target.classList.toggle('crossOut');
-    entry.isDone = !entry.isDone;
-    dc.saveToLocalStorage();
-  });
+  addEntryMousedownListener(liSet);
+  addEntryDoubleClickListener(liSet, entry);
+
   // If it's a goal, display on goal side
   if (entry.isGoal) {
     document.getElementById('glist').appendChild(liSet);
@@ -144,59 +143,62 @@ function prepCardEventListeners(idDate) {
   document.getElementById('anew').addEventListener('change', (e) => {
     inputHandler(aInput, idDate, false)});
 }
-    
-function inputHandler(input, idDate, isGoal) {
-  let dataLS = JSON.parse(localStorage.getItem('daycards'));
-  if (!dataLS[idDate]) {
-    dataLS[idDate] = [];
-  };
-  let inputText = input.value;
-  let newInput = new Entry (inputText, isGoal);
-  dataLS[idDate].push(newInput);
-  localStorage.setItem('daycards', JSON.stringify(dataLS));
-  const updatedLS = JSON.parse(localStorage.getItem('daycards'));
-  const liCurrent = document.createElement('li');
-  let entryCurrent = updatedLS[idDate];
-  console.log('entryCurrent: ' + entryCurrent);
-  let key = entryCurrent.length - 1;
-  liCurrent.textContent = entryCurrent[key]['text'];
-  console.log('Input value: ' + entryCurrent[key]['text']);
-  if (isGoal) {
-    document.getElementById('glist').appendChild(liCurrent);
-    document.getElementById('gnew').value = '';
-  } else {
-    document.getElementById('alist').appendChild(liCurrent);
-    document.getElementById('anew').value = '';
-  }
-  liCurrent.addEventListener('mousedown',(e) => {
+
+function addEntryDoubleClickListener(entryElement, entry) {
+  entryElement.addEventListener('dblclick',(e) => {
+    e.target.classList.toggle('crossOut');
+    entry.isDone = !entry.isDone;
+    dc.saveToLocalStorage();
+  });
+}
+
+function addEntryMousedownListener(entryElement) {
+  entryElement.addEventListener('mousedown',(e) => {
     if (e.detail> 1) {
       e.preventDefault();
     };
   });
-  
-  // Activate doubleclick listener
-  liCurrent.addEventListener('dblclick',(e) => {
-    e.target.classList.toggle('crossOut');
-    entryCurrent[key].isDone = !entryCurrent[key].isDone;
-    localStorage.setItem('daycards', JSON.stringify(updatedLS));
-  });
-};
-addLoadEvent(onStartUp);
-  
+}
+    
+function inputHandler(input, idDate, isGoal) {
+  // 1. update data
+  if (!dc.dayCards[idDate]) {
+    dc.dayCards[idDate] = [];
+  };
 
-// Check if there are any entries for today's card
-// If yes, load and display on DOM
-// If not, set up the blank card with all listeners
+  dc.dayCards[idDate].push(new Entry(input.value, isGoal));
+  dc.saveToLocalStorage();
+  
+  // 2. update view
+  let entriesLength = dc.dayCards[idDate].length;
+  let entry = dc.dayCards[idDate][entriesLength - 1];
+  let entryElement = createEntryElement(entry);
+
+  // 3. bind events listeners
+  addEntryMousedownListener(entryElement);
+  addEntryDoubleClickListener(entryElement, entry);
+};
+
+function createEntryElement(entry) {
+  const entryElement = document.createElement('li');
+  entryElement.textContent = entry['text'];
+  
+  if (entry.isGoal) {
+    document.getElementById('glist').appendChild(entryElement);
+    document.getElementById('gnew').value = '';
+  } else {
+    document.getElementById('alist').appendChild(entryElement);
+    document.getElementById('anew').value = '';
+  }
+  
+  return entryElement;
+}
+
+addLoadEvent(onStartUp);
 
 // When user click previous day button
 
 // When user click next day button
-
-// When user enter a goal entry
-
-// When user enter an achievement entry
-
-// When user mark a goal achieved
 
 // When user delete an entry
 
