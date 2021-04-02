@@ -108,7 +108,7 @@ footer {
   color: lightgrey;
 }
 
-.fasd {
+.normalbutton {
   display: inline-block;
   text-align: center;
   width: 17px;
@@ -121,7 +121,20 @@ footer {
   /* font-size: 16px; */
 }
 
-.fasd:hover {
+.trashbutton {
+  display: inline-block;
+  text-align: center;
+  width: 17px;
+  height: 17px;
+  line-height: 17px;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 50%;
+  transition: .1s;
+  /* font-size: 16px; */
+}
+
+.normalbutton:hover {
   background-color: khaki;
   color: black;
   cursor: pointer;
@@ -166,6 +179,7 @@ h4 {
 } */
 
 .invisible {
+  /* visibility: hidden; */
   display: none;
 }
 
@@ -217,6 +231,15 @@ ol {
 
 .crossOut {
   text-decoration: line-through;
+}
+
+.hold {
+  border: solid 1px violet;
+}
+
+.hovered {
+  background-color: khaki;
+  color: black;
 }
 
 /* @media only screen and (min-width: 400px) {

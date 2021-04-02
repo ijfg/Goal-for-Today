@@ -76,7 +76,7 @@ function prepCardContents(idDate, afterLoad) {
   if (dc.dayCards) {
     if (dc.dayCards[idDate]) {
       for (let i = 0; i < dc.dayCards[idDate].length; i++) {
-        renderEntry(dc.dayCards[idDate][i]);
+        renderEntry(idDate, i);
       }
     } else {
       // If the day's card doesn't exist
@@ -101,8 +101,12 @@ function initCard(idDate) {
   dc.saveToLocalStorage();
 }
 
-function renderEntry(entry) {
+function renderEntry(idDate, i) {
+  let entry = dc.dayCards[idDate][i];
+  // const liContainer = document.createElement('li')
   const liSet = document.createElement('li');
+  liSet.setAttribute('draggable', 'true');
+  liSet.setAttribute('id', `${idDate}-${i}`);
   // Load content
   liSet.textContent = entry['text'];
   // Mark state
@@ -112,40 +116,108 @@ function renderEntry(entry) {
   // Prevent default action
   addEntryMousedownListener(liSet);
   addEntryDoubleClickListener(liSet, entry);
+  addDragDropListener(liSet, i);
 
   // If it's a goal, display on goal side
   if (entry.isGoal) {
     document.getElementById('glist').appendChild(liSet);
+    document.getElementById('gnew').value = '';
   } else {
     // If not, display on achievement side
     document.getElementById('alist').appendChild(liSet);
+    document.getElementById('anew').value = '';
   }
 }
 
 function prepCardEventListeners(idDate) {
+  setFlipButtons();
+  setInputField(idDate);
+  setTrashZone(idDate);
+  // When click previous/next day button
+}
+
+// function dragOver(e) {
+//   e.preventDefault();
+//   console.log('::: dragover :::');
+//   e.target.classList.toggle('hovered');
+// };
+
+function setTrashZone(idDate){
+  const trashZones = document.querySelectorAll('.trashbutton');
+  for (const trashZone of trashZones) {
+    trashZone.addEventListener('dragenter', e => {
+      e.preventDefault();
+      console.log('::: dragenter :::');
+      e.target.classList.toggle('hovered');
+    });
+    trashZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      console.log('::: dragover :::');
+    });
+    trashZone.addEventListener('dragleave', e => {
+      console.log('::: dragleave :::');
+      e.target.classList.toggle('hovered');
+    });
+    trashZone.addEventListener('drop', e => {
+      e.preventDefault();
+      console.log('::: drop :::');
+      const droppedData = JSON.parse(e.dataTransfer.getData('text/plain'));
+      console.log(droppedData.indexKey);
+      console.log('::: Before delete: ' + dc.dayCards[idDate]);
+      dc.dayCards[idDate].splice(droppedData.indexKey, 1);
+      console.log('::: After delete: ' + dc.dayCards[idDate]);
+      dc.saveToLocalStorage();
+      const droppedElement = document.getElementById(droppedData.id);
+      console.log(droppedElement);
+      droppedElement.classList.toggle('invisible');
+      e.target.classList.toggle('hovered');
+    });
+  }
+}
+
+function setFlipButtons() {
   // Flip front to back event listner
-  document.getElementById('gFlip').addEventListener('click', (e) => {
+  document.getElementById('gFlip').addEventListener('click', e => {
     document.getElementById('sec').classList.toggle('flip');
   });
   // Flip back to front event listner
-  document.getElementById('aFlip').addEventListener('click', (e) => {
+  document.getElementById('aFlip').addEventListener('click', e => {
     document.getElementById('sec').classList.toggle('flip');
   });
-  // When click previous day button
-  
-  // When click next day button
-  
-  // Setup input field
+}
+
+function setInputField(idDate) {
   const gInput = document.getElementById('gnew');
-  document.getElementById('gnew').addEventListener('change', (e) => {
+  document.getElementById('gnew').addEventListener('change', e => {
     inputHandler(gInput, idDate, true)});
   const aInput = document.getElementById('anew');
-  document.getElementById('anew').addEventListener('change', (e) => {
+  document.getElementById('anew').addEventListener('change', e => {
     inputHandler(aInput, idDate, false)});
 }
 
+function DraggedData (id, indexKey) {
+  this.id = id;
+  this.indexKey = indexKey;
+};
+
+function addDragDropListener(entryElement, index){
+  // entryElement.addEventListener('dragstar', e => dragStart(e,index));
+  entryElement.addEventListener('dragstart', (e) => {
+    console.log('::: dragstart :::');
+    const draggedData = new DraggedData(entryElement.id, index);
+    e.dataTransfer.setData('text/plain', JSON.stringify(draggedData));
+    // setTimeout(() => (e.target.classList.toggle('invisible')),300);
+  });
+}
+
+// function dragStart(e, index){
+//   console.log('::: dragstart :::');
+//   e.dataTransfer.setData('text/plain', index);
+//   setTimeout( e => (e.target.classList.toggle('invisible')),300);
+// }
+
 function addEntryDoubleClickListener(entryElement, entry) {
-  entryElement.addEventListener('dblclick',(e) => {
+  entryElement.addEventListener('dblclick',e => {
     e.target.classList.toggle('crossOut');
     entry.isDone = !entry.isDone;
     dc.saveToLocalStorage();
@@ -153,7 +225,7 @@ function addEntryDoubleClickListener(entryElement, entry) {
 }
 
 function addEntryMousedownListener(entryElement) {
-  entryElement.addEventListener('mousedown',(e) => {
+  entryElement.addEventListener('mousedown',e => {
     if (e.detail> 1) {
       e.preventDefault();
     };
@@ -170,29 +242,26 @@ function inputHandler(input, idDate, isGoal) {
   dc.saveToLocalStorage();
   
   // 2. update view
-  let entriesLength = dc.dayCards[idDate].length;
-  let entry = dc.dayCards[idDate][entriesLength - 1];
-  let entryElement = createEntryElement(entry);
-
-  // 3. bind events listeners
-  addEntryMousedownListener(entryElement);
-  addEntryDoubleClickListener(entryElement, entry);
+  // let entryElement = createEntryElement(entry);
+  // let entryElement = createEntryElement(idDate);
+  let index = dc.dayCards[idDate].length - 1;
+  renderEntry(idDate, index);
+  
+  // // 3. bind events listeners
+  // addEntryMousedownListener(entryElement);
+  // addEntryDoubleClickListener(entryElement, entry);
+  // addDragDropListener(entryElement);
 };
 
-function createEntryElement(entry) {
-  const entryElement = document.createElement('li');
-  entryElement.textContent = entry['text'];
-  
-  if (entry.isGoal) {
-    document.getElementById('glist').appendChild(entryElement);
-    document.getElementById('gnew').value = '';
-  } else {
-    document.getElementById('alist').appendChild(entryElement);
-    document.getElementById('anew').value = '';
-  }
-  
-  return entryElement;
-}
+function throttle(action) {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(action);
+      isRunning = false;
+    };
+  };
 
 addLoadEvent(onStartUp);
 
