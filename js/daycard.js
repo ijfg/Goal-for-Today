@@ -1,7 +1,11 @@
-function Entry (text, isGoal) {
+function Entry (text) {
   this.text = text;
-  this.isGoal = isGoal;
   this.isDone = false;
+}
+
+function DayCard () {
+  this.goals = [];
+  this.chores = [];
 }
 
 function DayCards() {
@@ -46,27 +50,14 @@ function getNextDId(idDate) {
 }
 
 function onStartUp(){
-  // Create today's day ID
   let d = new Date();
   const idToday = turnToId(d);
-  // Display date on DOM card
   const dateBlanks = document.querySelectorAll('h4');
-  // On both goal and achievement sides
   for (const blank of dateBlanks) {
     blank.textContent = idToday;
   }
-  // Load previous entries
   prepCard(idToday);
 };
-
-
-// dc.dayCards[date][i].remove();
-// dc.saveToLocalStorage();
-// updateView();
-
-// item from i to j
-// item = dc.dayCards[date][i].remove
-// dc.dayCards[date][j].add(item)
 
 function prepCard(idDate) {
   prepCardContents(idDate, prepCardEventListeners);
@@ -74,9 +65,12 @@ function prepCard(idDate) {
 
 function prepCardContents(idDate, afterLoad) {
   if (dc.dayCards) {
-    if (dc.dayCards[idDate]) {
-      for (let i = 0; i < dc.dayCards[idDate].length; i++) {
-        renderEntry(idDate, i);
+    if (dc.dayCards[idDate]['goals'] || dc.dayCards[idDate]['chores']) {
+      for (let i = 0; i < dc.dayCards[idDate]['goals'].length; i++) {
+        renderEntry(idDate, i, 'goals');
+      }
+      for (let j = 0; j < dc.dayCards[idDate]['chores'].length; j++) {
+        renderEntry(idDate, j, 'chores');
       }
     } else {
       // If the day's card doesn't exist
@@ -97,33 +91,28 @@ function initCards() {
 }
 
 function initCard(idDate) {
-  dc.dayCards[idDate] = [];
+  dc.dayCards[idDate] = new DayCard();
   dc.saveToLocalStorage();
 }
 
-function renderEntry(idDate, i) {
-  let entry = dc.dayCards[idDate][i];
-  // const liContainer = document.createElement('li')
+function renderEntry(idDate, i, type) {
+  let entry = dc.dayCards[idDate][type][i];
   const liSet = document.createElement('li');
   liSet.setAttribute('draggable', 'true');
-  liSet.setAttribute('id', `${idDate}-${i}`);
-  // Load content
+  liSet.setAttribute('class', 'draggable');
+  liSet.setAttribute('id', `${idDate}${type}${i}`);
   liSet.textContent = entry['text'];
-  // Mark state
   if (entry.isDone) {
     liSet.classList.toggle('crossOut');
   };
-  // Prevent default action
   addEntryMousedownListener(liSet);
   addEntryDoubleClickListener(liSet, entry);
-  addDragDropListener(liSet, i);
+  addDragDropListener(liSet, i, type);
 
-  // If it's a goal, display on goal side
-  if (entry.isGoal) {
+  if (type == 'goals') {
     document.getElementById('glist').appendChild(liSet);
     document.getElementById('gnew').value = '';
   } else {
-    // If not, display on achievement side
     document.getElementById('alist').appendChild(liSet);
     document.getElementById('anew').value = '';
   }
@@ -135,12 +124,6 @@ function prepCardEventListeners(idDate) {
   setTrashZone(idDate);
   // When click previous/next day button
 }
-
-// function dragOver(e) {
-//   e.preventDefault();
-//   console.log('::: dragover :::');
-//   e.target.classList.toggle('hovered');
-// };
 
 function setTrashZone(idDate){
   const trashZones = document.querySelectorAll('.trashbutton');
@@ -163,8 +146,9 @@ function setTrashZone(idDate){
       console.log('::: drop :::');
       const droppedData = JSON.parse(e.dataTransfer.getData('text/plain'));
       console.log(droppedData.indexKey);
-      console.log('::: Before delete: ' + dc.dayCards[idDate]);
-      dc.dayCards[idDate].splice(droppedData.indexKey, 1);
+      const type = droppedData.type;
+      console.log('::: Before delete: ' + dc.dayCards[idDate][type]);
+      dc.dayCards[idDate][type].splice(droppedData.indexKey, 1);
       console.log('::: After delete: ' + dc.dayCards[idDate]);
       dc.saveToLocalStorage();
       const droppedElement = document.getElementById(droppedData.id);
@@ -195,26 +179,24 @@ function setInputField(idDate) {
     inputHandler(aInput, idDate, false)});
 }
 
-function DraggedData (id, indexKey) {
+function DraggedData (id, indexKey, type) {
   this.id = id;
   this.indexKey = indexKey;
+  this.type = type;
 };
 
-function addDragDropListener(entryElement, index){
-  // entryElement.addEventListener('dragstar', e => dragStart(e,index));
-  entryElement.addEventListener('dragstart', (e) => {
+function addDragDropListener(entryElement, index, type){
+  entryElement.addEventListener('dragstart', e => {
     console.log('::: dragstart :::');
-    const draggedData = new DraggedData(entryElement.id, index);
+    entryElement.classList.toggle('dragging');
+    const draggedData = new DraggedData(entryElement.id, index, type);
     e.dataTransfer.setData('text/plain', JSON.stringify(draggedData));
     // setTimeout(() => (e.target.classList.toggle('invisible')),300);
   });
+  entryElement.addEventListener('dragend', () => {
+    entryElement.classList.toggle('dragging');
+  })
 }
-
-// function dragStart(e, index){
-//   console.log('::: dragstart :::');
-//   e.dataTransfer.setData('text/plain', index);
-//   setTimeout( e => (e.target.classList.toggle('invisible')),300);
-// }
 
 function addEntryDoubleClickListener(entryElement, entry) {
   entryElement.addEventListener('dblclick',e => {
@@ -233,35 +215,19 @@ function addEntryMousedownListener(entryElement) {
 }
     
 function inputHandler(input, idDate, isGoal) {
-  // 1. update data
-  if (!dc.dayCards[idDate]) {
-    dc.dayCards[idDate] = [];
-  };
-
-  dc.dayCards[idDate].push(new Entry(input.value, isGoal));
-  dc.saveToLocalStorage();
-  
-  // 2. update view
-  // let entryElement = createEntryElement(entry);
-  // let entryElement = createEntryElement(idDate);
-  let index = dc.dayCards[idDate].length - 1;
-  renderEntry(idDate, index);
-  
-  // // 3. bind events listeners
-  // addEntryMousedownListener(entryElement);
-  // addEntryDoubleClickListener(entryElement, entry);
-  // addDragDropListener(entryElement);
+  if (isGoal) {
+    let goals = dc.dayCards[idDate]['goals'];
+    goals.push(new Entry(input.value));
+    dc.saveToLocalStorage();
+    console.log('goals.length ' + goals.length);
+    renderEntry(idDate, goals.length - 1, 'goals');
+  } else {
+    let chores = dc.dayCards[idDate]['chores'];
+    chores.push(new Entry(input.value));
+    dc.saveToLocalStorage();
+    renderEntry(idDate, chores.length - 1, 'chores');
+  }
 };
-
-function throttle(action) {
-  let isRunning = false;
-  return () => {
-    if (isRunning) return;
-    isRunning = true;
-    window.requestAnimationFrame(action);
-      isRunning = false;
-    };
-  };
 
 addLoadEvent(onStartUp);
 
@@ -269,7 +235,7 @@ addLoadEvent(onStartUp);
 
 // When user click next day button
 
-// When user delete an entry
+// When user delete an entry (mobile)
 
 // When user drag an entry
 

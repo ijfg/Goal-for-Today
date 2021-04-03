@@ -242,6 +242,14 @@ ol {
   color: black;
 }
 
+.draggable {
+
+}
+
+.dragging {
+  opacity: .35;
+}
+
 /* @media only screen and (min-width: 400px) {
   .cardcard {
     width: 75%;
