@@ -210,13 +210,18 @@ form {
   font-size: 19px;
   /* text-transform: capitalize; */
   transition: .1s;
+  text-transform: capitalize;
+  /* transition: .1s; */
+  /* border: solid 1px violet; */
+  /* background-color: khaki; */
   border-radius: 2.5px;
-  line-height: 25px;
+  line-height: 35px;
 }
 
 .goal ol li:hover {
   background-color: khaki;
   cursor: pointer;
+  /* border: solid 1px violet; */
 }
 
 .achi ol li:hover {
@@ -247,7 +252,11 @@ ol {
 }
 
 .dragging {
-  opacity: .35;
+  opacity: .5;
+}
+
+.dragcontainer {
+
 }
 
 /* @media only screen and (min-width: 400px) {

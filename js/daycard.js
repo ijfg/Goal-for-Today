@@ -64,23 +64,37 @@ function prepCard(idDate) {
 };
 
 function prepCardContents(idDate, afterLoad) {
-  if (dc.dayCards) {
-    if (dc.dayCards[idDate]['goals'] || dc.dayCards[idDate]['chores']) {
-      for (let i = 0; i < dc.dayCards[idDate]['goals'].length; i++) {
-        renderEntry(idDate, i, 'goals');
-      }
-      for (let j = 0; j < dc.dayCards[idDate]['chores'].length; j++) {
-        renderEntry(idDate, j, 'chores');
-      }
-    } else {
-      // If the day's card doesn't exist
-      initCard(idDate);
-    }
-  } else {
-    // If no cards exist
+  if (!dc.dayCards) {
     initCards();
     initCard(idDate);
+  } else if (!dc.dayCards[idDate]) {
+    initCard(idDate);
+  } else {
+    for (let i = 0; i < dc.dayCards[idDate]['goals'].length; i++) {
+      renderEntry(idDate, i, 'goals');
+    }
+    for (let j = 0; j < dc.dayCards[idDate]['chores'].length; j++) {
+      renderEntry(idDate, j, 'chores');
+    }
   }
+
+  // if (dc.dayCards) {
+  //   if (dc.dayCards[idDate]['goals'] || dc.dayCards[idDate]['chores']) {
+  //     for (let i = 0; i < dc.dayCards[idDate]['goals'].length; i++) {
+  //       renderEntry(idDate, i, 'goals');
+  //     }
+  //     for (let j = 0; j < dc.dayCards[idDate]['chores'].length; j++) {
+  //       renderEntry(idDate, j, 'chores');
+  //     }
+  //   } else {
+  //     // If the day's card doesn't exist
+  //     initCard(idDate);
+  //   }
+  // } else {
+  //   // If no cards exist
+  //   initCards();
+  //   initCard(idDate);
+  // }
 
   afterLoad(idDate);
 }
@@ -122,7 +136,64 @@ function prepCardEventListeners(idDate) {
   setFlipButtons();
   setInputField(idDate);
   setTrashZone(idDate);
+  setDragZone(idDate);
   // When click previous/next day button
+}
+
+let container = document.getElementById('glist');
+function setDragZone(idDate) {
+  // const containers = document.querySelectorAll('.dragcontainer');
+  // containers.forEach( container => {
+  //   container.addEventListener('dragover', e => {
+  //     e.preventDefault();
+  //     // console.log('::: sorting--dragover :::');
+  //     const afterElement = getDragAfterElement(container, e.clientY);
+  //     const dragging = document.querySelector('.dragging');
+  //     if (afterElement == null) {
+  //       container.appendChild(dragging);
+  //     } else {
+  //       container.insertBefore(dragging, afterElement)
+  //     }
+  //   })
+  // })
+  container.addEventListener('dragover', dragOver, false);
+}
+
+function dragOver (e) {
+  e.preventDefault();
+  const afterElement = getDragAfterElement(container, e.clientY);
+  const dragging = document.querySelector('.dragging');
+  if (afterElement == null) {
+    container.appendChild(dragging);
+  } else {
+    container.insertBefore(dragging, afterElement);
+  }
+}
+
+// function throttle(action) {
+//   let isRunning = false;
+//   return () => {
+//     if (isRunning) return;
+//     isRunning = true;
+//     window.requestAnimationFrame(action);
+//       isRunning = false;
+//     };
+//   };
+
+function getDragAfterElement(container, mouseY) {
+  const draggables = [...container.querySelectorAll('.draggable')];
+
+  // child is each element iin draggables
+  // closest 
+  return draggables.reduce((closest, child) => {
+    const liBox = child.getBoundingClientRect();
+    const offset = mouseY - liBox.top - liBox.height / 2;
+    if (offset < 0 && offset > closest.offset){
+      return {offset: offset, element: child}
+    } else {
+      return closest
+    }
+  }, {offset: Number.NEGATIVE_INFINITY}).element
 }
 
 function setTrashZone(idDate){
@@ -130,29 +201,29 @@ function setTrashZone(idDate){
   for (const trashZone of trashZones) {
     trashZone.addEventListener('dragenter', e => {
       e.preventDefault();
-      console.log('::: dragenter :::');
+      // console.log('::: dragenter :::');
       e.target.classList.toggle('hovered');
     });
     trashZone.addEventListener('dragover', e => {
       e.preventDefault();
-      console.log('::: dragover :::');
+      // console.log('::: dragover :::');
     });
     trashZone.addEventListener('dragleave', e => {
-      console.log('::: dragleave :::');
+      // console.log('::: dragleave :::');
       e.target.classList.toggle('hovered');
     });
     trashZone.addEventListener('drop', e => {
       e.preventDefault();
-      console.log('::: drop :::');
+      // console.log('::: drop :::');
       const droppedData = JSON.parse(e.dataTransfer.getData('text/plain'));
       console.log(droppedData.indexKey);
       const type = droppedData.type;
-      console.log('::: Before delete: ' + dc.dayCards[idDate][type]);
+      // console.log('::: Before delete: ' + dc.dayCards[idDate][type]);
       dc.dayCards[idDate][type].splice(droppedData.indexKey, 1);
-      console.log('::: After delete: ' + dc.dayCards[idDate]);
+      // console.log('::: After delete: ' + dc.dayCards[idDate]);
       dc.saveToLocalStorage();
       const droppedElement = document.getElementById(droppedData.id);
-      console.log(droppedElement);
+      // console.log(droppedElement);
       droppedElement.classList.toggle('invisible');
       e.target.classList.toggle('hovered');
     });
@@ -187,7 +258,7 @@ function DraggedData (id, indexKey, type) {
 
 function addDragDropListener(entryElement, index, type){
   entryElement.addEventListener('dragstart', e => {
-    console.log('::: dragstart :::');
+    // console.log('::: dragstart :::');
     entryElement.classList.toggle('dragging');
     const draggedData = new DraggedData(entryElement.id, index, type);
     e.dataTransfer.setData('text/plain', JSON.stringify(draggedData));
@@ -219,7 +290,7 @@ function inputHandler(input, idDate, isGoal) {
     let goals = dc.dayCards[idDate]['goals'];
     goals.push(new Entry(input.value));
     dc.saveToLocalStorage();
-    console.log('goals.length ' + goals.length);
+    // console.log('goals.length ' + goals.length);
     renderEntry(idDate, goals.length - 1, 'goals');
   } else {
     let chores = dc.dayCards[idDate]['chores'];
