@@ -216,6 +216,8 @@ form {
   /* background-color: khaki; */
   border-radius: 2.5px;
   line-height: 35px;
+  list-style-position: inside;
+  padding-left: 1em;
 }
 
 .goal ol li:hover {
@@ -231,7 +233,7 @@ form {
 
 ol {
   text-align: left;
-  margin: 11% 10% 0 15%;
+  margin: 11% 10% 0 10%;
 }
 
 .crossOut {
