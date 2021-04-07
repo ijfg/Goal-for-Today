@@ -77,25 +77,6 @@ function prepCardContents(idDate, afterLoad) {
       renderEntry(idDate, j, 'chores');
     }
   }
-
-  // if (dc.dayCards) {
-  //   if (dc.dayCards[idDate]['goals'] || dc.dayCards[idDate]['chores']) {
-  //     for (let i = 0; i < dc.dayCards[idDate]['goals'].length; i++) {
-  //       renderEntry(idDate, i, 'goals');
-  //     }
-  //     for (let j = 0; j < dc.dayCards[idDate]['chores'].length; j++) {
-  //       renderEntry(idDate, j, 'chores');
-  //     }
-  //   } else {
-  //     // If the day's card doesn't exist
-  //     initCard(idDate);
-  //   }
-  // } else {
-  //   // If no cards exist
-  //   initCards();
-  //   initCard(idDate);
-  // }
-
   afterLoad(idDate);
 }
 
@@ -114,14 +95,14 @@ function renderEntry(idDate, i, type) {
   const liSet = document.createElement('li');
   liSet.setAttribute('draggable', 'true');
   liSet.setAttribute('class', 'draggable');
-  liSet.setAttribute('id', `${idDate}${type}${i}`);
+  liSet.setAttribute('id', `${idDate}_${type}_${i}`);
   liSet.textContent = entry['text'];
   if (entry.isDone) {
     liSet.classList.toggle('crossOut');
   };
   addEntryMousedownListener(liSet);
   addEntryDoubleClickListener(liSet, entry);
-  addDragDropListener(liSet, i, type);
+  // addDragDropListener(liSet, i, type);
 
   if (type == 'goals') {
     document.getElementById('glist').appendChild(liSet);
@@ -136,65 +117,96 @@ function prepCardEventListeners(idDate) {
   setFlipButtons();
   setInputField(idDate);
   setTrashZone(idDate);
-  setDragZone(idDate);
+  setDragSort(idDate, 'glist');
   // When click previous/next day button
 }
 
-let container = document.getElementById('glist');
-function setDragZone(idDate) {
-  // const containers = document.querySelectorAll('.dragcontainer');
-  // containers.forEach( container => {
-  //   container.addEventListener('dragover', e => {
-  //     e.preventDefault();
-  //     // console.log('::: sorting--dragover :::');
-  //     const afterElement = getDragAfterElement(container, e.clientY);
-  //     const dragging = document.querySelector('.dragging');
-  //     if (afterElement == null) {
-  //       container.appendChild(dragging);
-  //     } else {
-  //       container.insertBefore(dragging, afterElement)
-  //     }
-  //   })
-  // })
-  container.addEventListener('dragover', dragOver, false);
+function getMouseY(evt) {
+  const targetRect = evt.target.getBoundingClientRect();
+  const offset = evt.pageY - targetRect.top;
+  return offset;
 }
 
-function dragOver (e) {
-  e.preventDefault();
-  const afterElement = getDragAfterElement(container, e.clientY);
-  const dragging = document.querySelector('.dragging');
-  if (afterElement == null) {
-    container.appendChild(dragging);
-  } else {
-    container.insertBefore(dragging, afterElement);
+function getVerticalCenter(el) {
+  const rect = el.getBoundingClientRect();
+  return (rect.bottom - rect.top) /2;
+}
+
+function setDragSort(idDate) {
+  let containers = document.querySelectorAll('.dragcontainer');
+  for (let container of containers) {
+    let dragEl;
+  
+    function onDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.effectAllowed = 'move';
+      
+      let target = e.target; // to be dragovered's event target
+      // console.log('dragover e.target: ' + e.target.textContent);
+      if (target && target !== dragEl && target.nodeName == 'LI'){
+        const mouseY = getMouseY(e);
+        const targetY = getVerticalCenter(target);
+        if (mouseY > targetY) {
+          container.insertBefore(dragEl, target.nextSibling);
+          // console.log('insert before target.nextSibling: ' + target.nextSibling);
+        } else {
+          container.insertBefore(dragEl, target);
+          // console.log('insert before target: ' + target);
+        }
+      }
+    }
+  
+    function onDragEnd(e) {
+      e.preventDefault();
+      // console.log('dragend e.target: ' + e.target.textContent);
+  
+      dragEl.classList.toggle('dragging');
+      container.removeEventListener('dragover', onDragOver, false);
+      container.removeEventListener('dragend', onDragEnd, false);
+    }
+  
+    container.addEventListener('dragstart', e => {
+      dragEl = e.target; // dragstart's event target
+      e.dataTransfer.effectAllowed = 'move';
+      const draggedData = new DraggedData(dragEl.id);
+      e.dataTransfer.setData('text/plain', JSON.stringify(draggedData));
+      
+      container.addEventListener('dragover', onDragOver, false);
+      container.addEventListener('dragend', onDragEnd, false);
+      
+      dragEl.classList.toggle('dragging');
+      // setTime out makes hovered li seethrough, thus cannot be used
+      // setTimeout(() => (e.target.classList.toggle('dragging')),0);
+    }, false);
   }
 }
 
-// function throttle(action) {
-//   let isRunning = false;
-//   return () => {
-//     if (isRunning) return;
-//     isRunning = true;
-//     window.requestAnimationFrame(action);
-//       isRunning = false;
-//     };
-//   };
+// function dragOver (e) {
+//   e.preventDefault();
+//   const afterElement = getDragAfterElement(container, e.clientY);
+//   const dragging = document.querySelector('.dragging');
+//   if (afterElement == null) {
+//     container.appendChild(dragging);
+//   } else {
+//     container.insertBefore(dragging, afterElement);
+//   }
+// }
 
-function getDragAfterElement(container, mouseY) {
-  const draggables = [...container.querySelectorAll('.draggable')];
+// function getDragAfterElement(container, mouseY) {
+//   const draggables = [...container.querySelectorAll('.draggable')];
 
-  // child is each element iin draggables
-  // closest 
-  return draggables.reduce((closest, child) => {
-    const liBox = child.getBoundingClientRect();
-    const offset = mouseY - liBox.top - liBox.height / 2;
-    if (offset < 0 && offset > closest.offset){
-      return {offset: offset, element: child}
-    } else {
-      return closest
-    }
-  }, {offset: Number.NEGATIVE_INFINITY}).element
-}
+//   // child is each element in draggables
+//   // closest 
+//   return draggables.reduce((closest, child) => {
+//     const liBox = child.getBoundingClientRect();
+//     const offset = mouseY - liBox.top - liBox.height / 2;
+//     if (offset < 0 && offset > closest.offset){
+//       return {offset: offset, element: child}
+//     } else {
+//       return closest
+//     }
+//   }, {offset: Number.NEGATIVE_INFINITY}).element
+// }
 
 function setTrashZone(idDate){
   const trashZones = document.querySelectorAll('.trashbutton');
@@ -214,14 +226,14 @@ function setTrashZone(idDate){
     });
     trashZone.addEventListener('drop', e => {
       e.preventDefault();
-      // console.log('::: drop :::');
+      console.log('trash drop e.target: ' + e.target.nodeName);
       const droppedData = JSON.parse(e.dataTransfer.getData('text/plain'));
-      console.log(droppedData.indexKey);
       const type = droppedData.type;
       // console.log('::: Before delete: ' + dc.dayCards[idDate][type]);
       dc.dayCards[idDate][type].splice(droppedData.indexKey, 1);
       // console.log('::: After delete: ' + dc.dayCards[idDate]);
       dc.saveToLocalStorage();
+      console.log('Deleted in LS: index ' + droppedData.indexKey);
       const droppedElement = document.getElementById(droppedData.id);
       // console.log(droppedElement);
       droppedElement.classList.toggle('invisible');
@@ -250,24 +262,29 @@ function setInputField(idDate) {
     inputHandler(aInput, idDate, false)});
 }
 
-function DraggedData (id, indexKey, type) {
+function DraggedData (id) {
+  const t = id.split('_')[1];
+  const i = id.split('_')[2];
   this.id = id;
-  this.indexKey = indexKey;
-  this.type = type;
+  this.indexKey = i;
+  this.type = t;
 };
 
-function addDragDropListener(entryElement, index, type){
-  entryElement.addEventListener('dragstart', e => {
-    // console.log('::: dragstart :::');
-    entryElement.classList.toggle('dragging');
-    const draggedData = new DraggedData(entryElement.id, index, type);
-    e.dataTransfer.setData('text/plain', JSON.stringify(draggedData));
-    // setTimeout(() => (e.target.classList.toggle('invisible')),300);
-  });
-  entryElement.addEventListener('dragend', () => {
-    entryElement.classList.toggle('dragging');
-  })
-}
+// function addDragDropListener(entryElement, index, type){
+//   entryElement.addEventListener('dragstart', e => {
+
+//     entryElement.classList.toggle('dragging');
+//     e.dataTransfer.effectAllowed = 'move';
+//     const draggedData = new DraggedData(entryElement.id, index, type);
+//     e.dataTransfer.setData('text/plain', JSON.stringify(draggedData));
+//     setTimeout(() => (e.target.classList.toggle('invisible')),0);
+
+//     entryElement.addEventListener('dragend', () => {
+//       entryElement.classList.toggle('dragging');
+//     })
+
+//   }, false);
+// }
 
 function addEntryDoubleClickListener(entryElement, entry) {
   entryElement.addEventListener('dblclick',e => {
