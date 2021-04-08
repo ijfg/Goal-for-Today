@@ -208,8 +208,6 @@ form {
 .card ol li {
   margin: 20px;
   font-size: 19px;
-  /* text-transform: capitalize; */
-  transition: .1s;
   text-transform: capitalize;
   /* transition: .1s; */
   /* border: solid 1px violet; */

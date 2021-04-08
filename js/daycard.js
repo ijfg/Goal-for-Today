@@ -135,45 +135,72 @@ function getVerticalCenter(el) {
 function setDragSort(idDate) {
   let containers = document.querySelectorAll('.dragcontainer');
   for (let container of containers) {
-    let dragEl;
+    let dragEl, targetIndex;
   
     function onDragOver(e) {
       e.preventDefault();
       e.dataTransfer.effectAllowed = 'move';
       
       let target = e.target; // to be dragovered's event target
-      // console.log('dragover e.target: ' + e.target.textContent);
       if (target && target !== dragEl && target.nodeName == 'LI'){
         const mouseY = getMouseY(e);
         const targetY = getVerticalCenter(target);
         if (mouseY > targetY) {
+          console.log('mouseY > targetY');
           container.insertBefore(dragEl, target.nextSibling);
-          // console.log('insert before target.nextSibling: ' + target.nextSibling);
+          targetIndex = [...container.children].indexOf(e.target.nextSibling);
+          console.log('targetIndex(nextSib): ' + targetIndex);
         } else {
+          console.log('mouseY < targetY');
           container.insertBefore(dragEl, target);
-          // console.log('insert before target: ' + target);
+          targetIndex = targetIndex - 1;
         }
       }
     }
-  
+    
+    function onDrop(e) {
+      e.preventDefault();
+      const droppedData = JSON.parse(e.dataTransfer.getData('text/plain'));
+      const type = droppedData.type;
+      let dragIndex = droppedData.indexKey;
+      console.log('dragIndex = ' + dragIndex + ' & ' + 'targetIndex = ' + targetIndex);
+      dc.dayCards[idDate][type].splice(targetIndex, 0, dc.dayCards[idDate][type].splice(dragIndex,1)[0]);
+      dc.saveToLocalStorage();
+    }
+
     function onDragEnd(e) {
       e.preventDefault();
-      // console.log('dragend e.target: ' + e.target.textContent);
   
       dragEl.classList.toggle('dragging');
       container.removeEventListener('dragover', onDragOver, false);
       container.removeEventListener('dragend', onDragEnd, false);
+      container.removeEventListener('drop', onDrop, false);
+    }
+
+
+    function swapArrayEl (arr, dIndex, sIndex) {
+      let x = arr[dIndex];
+      arr[dIndex] = arr[sIndex];
+      arr[sIndex] = x;
+    }
+
+    function getListID(isGoals) {
+      return (isGoals ? document.getElementById('glist'): document.getElementById('alist'));
     }
   
     container.addEventListener('dragstart', e => {
       dragEl = e.target; // dragstart's event target
       e.dataTransfer.effectAllowed = 'move';
-      const draggedData = new DraggedData(dragEl.id);
+      const dragIndex = [...container.children].indexOf(dragEl);
+      console.log('dragEl index: ' + dragIndex);
+      const draggedData = new DraggedData(dragEl.id, dragIndex);
       e.dataTransfer.setData('text/plain', JSON.stringify(draggedData));
       
       container.addEventListener('dragover', onDragOver, false);
       container.addEventListener('dragend', onDragEnd, false);
-      
+      container.addEventListener('drop', onDrop, false);
+      // container.children.forEach(addEventListener('drop', onDrop, false));
+
       dragEl.classList.toggle('dragging');
       // setTime out makes hovered li seethrough, thus cannot be used
       // setTimeout(() => (e.target.classList.toggle('dragging')),0);
@@ -262,12 +289,12 @@ function setInputField(idDate) {
     inputHandler(aInput, idDate, false)});
 }
 
-function DraggedData (id) {
-  const t = id.split('_')[1];
-  const i = id.split('_')[2];
+function DraggedData (id, index) {
+  // const t = id.split('_')[1];
+  // const i = id.split('_')[2];
   this.id = id;
-  this.indexKey = i;
-  this.type = t;
+  this.indexKey = index;
+  this.type = id.split('_')[1];
 };
 
 // function addDragDropListener(entryElement, index, type){
