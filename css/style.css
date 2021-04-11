@@ -148,8 +148,24 @@ footer {
 }
 
 .date {
-  text-align: right;
-  margin: 15px
+  display: flex;
+  /* width: 100%; */
+  padding: 18px;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: flex-end;
+  /* text-align: center; */
+}
+
+.mid {
+  /* font-size: 21px; */
+  vertical-align: middle;
+}
+
+.fa-caret-left {
+ font-size: 50px;
+ margin-right: 25px;
+ color: rgba(0, 0, 0, 0.4);
 }
 
 h4 {
@@ -240,6 +256,15 @@ ol {
 
 .crossOut {
   text-decoration: line-through;
+}
+
+.dbutton{
+  transition: .1s;
+}
+
+.dbutton:hover {
+  cursor: pointer;
+  color: khaki;
 }
 
 /* @media only screen and (min-width: 400px) {
