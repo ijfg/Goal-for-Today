@@ -16,6 +16,12 @@ function DayCards() {
 }
 let dc = new DayCards();
 
+function DraggedData (id, index) {
+  this.id = id;
+  this.indexKey = index;
+  this.type = id.split('_')[1];
+};
+
 function addLoadEvent(func){
   const oldonload = window.onload;
   if (typeof window.onload != "function") {
@@ -102,7 +108,6 @@ function renderEntry(idDate, i, type) {
   };
   addEntryMousedownListener(liSet);
   addEntryDoubleClickListener(liSet, entry);
-  // addDragDropListener(liSet, i, type);
 
   if (type == 'goals') {
     document.getElementById('glist').appendChild(liSet);
@@ -208,47 +213,17 @@ function setDragSort(idDate) {
   }
 }
 
-// function dragOver (e) {
-//   e.preventDefault();
-//   const afterElement = getDragAfterElement(container, e.clientY);
-//   const dragging = document.querySelector('.dragging');
-//   if (afterElement == null) {
-//     container.appendChild(dragging);
-//   } else {
-//     container.insertBefore(dragging, afterElement);
-//   }
-// }
-
-// function getDragAfterElement(container, mouseY) {
-//   const draggables = [...container.querySelectorAll('.draggable')];
-
-//   // child is each element in draggables
-//   // closest 
-//   return draggables.reduce((closest, child) => {
-//     const liBox = child.getBoundingClientRect();
-//     const offset = mouseY - liBox.top - liBox.height / 2;
-//     if (offset < 0 && offset > closest.offset){
-//       return {offset: offset, element: child}
-//     } else {
-//       return closest
-//     }
-//   }, {offset: Number.NEGATIVE_INFINITY}).element
-// }
-
 function setTrashZone(idDate){
   const trashZones = document.querySelectorAll('.trashbutton');
   for (const trashZone of trashZones) {
     trashZone.addEventListener('dragenter', e => {
       e.preventDefault();
-      // console.log('::: dragenter :::');
       e.target.classList.toggle('hovered');
     });
     trashZone.addEventListener('dragover', e => {
       e.preventDefault();
-      // console.log('::: dragover :::');
     });
     trashZone.addEventListener('dragleave', e => {
-      // console.log('::: dragleave :::');
       e.target.classList.toggle('hovered');
     });
     trashZone.addEventListener('drop', e => {
@@ -256,13 +231,10 @@ function setTrashZone(idDate){
       console.log('trash drop e.target: ' + e.target.nodeName);
       const droppedData = JSON.parse(e.dataTransfer.getData('text/plain'));
       const type = droppedData.type;
-      // console.log('::: Before delete: ' + dc.dayCards[idDate][type]);
       dc.dayCards[idDate][type].splice(droppedData.indexKey, 1);
-      // console.log('::: After delete: ' + dc.dayCards[idDate]);
       dc.saveToLocalStorage();
       console.log('Deleted in LS: index ' + droppedData.indexKey);
       const droppedElement = document.getElementById(droppedData.id);
-      // console.log(droppedElement);
       droppedElement.classList.toggle('invisible');
       e.target.classList.toggle('hovered');
     });
@@ -289,30 +261,6 @@ function setInputField(idDate) {
     inputHandler(aInput, idDate, false)});
 }
 
-function DraggedData (id, index) {
-  // const t = id.split('_')[1];
-  // const i = id.split('_')[2];
-  this.id = id;
-  this.indexKey = index;
-  this.type = id.split('_')[1];
-};
-
-// function addDragDropListener(entryElement, index, type){
-//   entryElement.addEventListener('dragstart', e => {
-
-//     entryElement.classList.toggle('dragging');
-//     e.dataTransfer.effectAllowed = 'move';
-//     const draggedData = new DraggedData(entryElement.id, index, type);
-//     e.dataTransfer.setData('text/plain', JSON.stringify(draggedData));
-//     setTimeout(() => (e.target.classList.toggle('invisible')),0);
-
-//     entryElement.addEventListener('dragend', () => {
-//       entryElement.classList.toggle('dragging');
-//     })
-
-//   }, false);
-// }
-
 function addEntryDoubleClickListener(entryElement, entry) {
   entryElement.addEventListener('dblclick',e => {
     e.target.classList.toggle('crossOut');
@@ -334,7 +282,6 @@ function inputHandler(input, idDate, isGoal) {
     let goals = dc.dayCards[idDate]['goals'];
     goals.push(new Entry(input.value));
     dc.saveToLocalStorage();
-    // console.log('goals.length ' + goals.length);
     renderEntry(idDate, goals.length - 1, 'goals');
   } else {
     let chores = dc.dayCards[idDate]['chores'];
