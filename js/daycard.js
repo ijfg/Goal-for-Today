@@ -49,33 +49,21 @@ function getNextDId(idDate) {
   return nextDId;
 }
 
-function getPreID(idDate) {
-  let dataDate = idDate.split('-');
-  let preDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
-  preDate = new Date(preDate.setDate(preDate.getDate() - 1));
-  const preDId = turnToId(preDate);
-  return preDId;
-}
-
 function onStartUp(){
-  const d = new Date();
+  let d = new Date();
   const idToday = turnToId(d);
-  prepCard(idToday);
-};
-
-function setDisplayDate(idDate) {
   const dateBlanks = document.querySelectorAll('h4');
   for (const blank of dateBlanks) {
-    blank.textContent = idDate;
+    blank.textContent = idToday;
   }
-}
+  prepCard(idToday);
+};
 
 function prepCard(idDate) {
   prepCardContents(idDate, prepCardEventListeners);
 };
 
 function prepCardContents(idDate, afterLoad) {
-  setDisplayDate(idDate);
   if (!dc.dayCards) {
     initCards();
     initCard(idDate);
@@ -127,43 +115,10 @@ function renderEntry(idDate, i, type) {
 
 function prepCardEventListeners(idDate) {
   setFlipButtons();
-  setInputField();
+  setInputField(idDate);
   setTrashZone(idDate);
   setDragSort(idDate, 'glist');
-  setNextDayButton(idDate);
-  setPreDayButton(idDate)
-}
-
-function setNextDayButton(idDate) {
-  document.getElementById('next').addEventListener('click', e => {
-    const nextID = getNextDId(idDate);
-    // clearContents();
-    clearContents();
-    prepCard(nextID);
-  })
-}
-
-function setPreDayButton(idDate) {
-  document.getElementById('previous').addEventListener('click', e => {
-    const preID = getPreID(idDate);
-    // clearContents();
-    clearContents();
-    prepCard(preID);
-  })
-}
-
-function clearContents(){
-  let dateBlanks = document.querySelectorAll('h4');
-  for (let blank of dateBlanks) {
-    blank.textContent = '';
-  };
-  let lists = document.querySelectorAll('ol');
-  console.log("dragcontainers :" + lists)
-  for (let i=0; i<lists.length; i++) {
-    while (lists[i].firstChild) {
-      lists[i].removeChild(lists[i].firstChild);
-    }
-  }
+  // When click previous/next day button
 }
 
 function getMouseY(evt) {
@@ -325,19 +280,14 @@ function setFlipButtons() {
   });
 }
 
-function setInputField() {
-  const date = document.getElementById('gdate');
-  const idDate = date.textContent;
-  // idDate = turnToId(idDate);
+function setInputField(idDate) {
   const gInput = document.getElementById('gnew');
-  const aInput = document.getElementById('anew');
   document.getElementById('gnew').addEventListener('change', e => {
-      inputHandler(gInput, idDate, true)});
+    inputHandler(gInput, idDate, true)});
+  const aInput = document.getElementById('anew');
   document.getElementById('anew').addEventListener('change', e => {
     inputHandler(aInput, idDate, false)});
-  // document.getElementById('gnew').addEventListener('change', inputHandler(gInput, idDate, true));
-  // document.getElementById('anew').addEventListener('change', inputHandler(aInput, idDate, false));
-  }
+}
 
 function DraggedData (id, index) {
   // const t = id.split('_')[1];
@@ -381,21 +331,16 @@ function addEntryMousedownListener(entryElement) {
     
 function inputHandler(input, idDate, isGoal) {
   if (isGoal) {
-    console.log('GidDate is: ' + idDate);
     let goals = dc.dayCards[idDate]['goals'];
     goals.push(new Entry(input.value));
     dc.saveToLocalStorage();
     // console.log('goals.length ' + goals.length);
     renderEntry(idDate, goals.length - 1, 'goals');
-    // document.getElementById('gnew').addEventListener('change', inputHandler);
-
   } else {
     let chores = dc.dayCards[idDate]['chores'];
     chores.push(new Entry(input.value));
     dc.saveToLocalStorage();
     renderEntry(idDate, chores.length - 1, 'chores');
-    // document.getElementById('anew').removeEventListener('change', inputHandler);
-
   }
 };
 
