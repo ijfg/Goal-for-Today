@@ -55,21 +55,93 @@ function getNextDId(idDate) {
   return nextDId;
 }
 
+function getPreID(idDate) {
+  let dataDate = idDate.split('-');
+  let preDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
+  preDate = new Date(preDate.setDate(preDate.getDate() - 1));
+  const preDId = turnToId(preDate);
+  return preDId;
+}
+
 function onStartUp(){
   let d = new Date();
   const idToday = turnToId(d);
-  const dateBlanks = document.querySelectorAll('h4');
-  for (const blank of dateBlanks) {
-    blank.textContent = idToday;
-  }
   prepCard(idToday);
 };
+
+function setDisplayDate(idDate) {
+  const dateBlanks = document.querySelectorAll('h4');
+  for (const blank of dateBlanks) {
+    blank.textContent = idDate;
+  }
+}
 
 function prepCard(idDate) {
   prepCardContents(idDate, prepCardEventListeners);
 };
 
-function prepCardContents(idDate, afterLoad) {
+// function prepCardStructure(callback) {
+//   const section = document.createElement('section');
+//   section.setAttribute('class', 'outter');
+//   section.setAttribute('id', 'out');
+//   section.innerHTML = `
+//   <i class="fas mid fa-caret-left dbutton"></i>
+//       <div class="container" id="sec">
+//         <div class="card">
+//           <div class="cardcard goal">
+//             <div class="date">
+//               <h4 id="gdate"></h4>
+//             </div>
+//             <div class="main">
+//               <form onsubmit="return false">
+//                 <label>
+//                   <input id="gnew" type="text" name="input" placeholder=" Goals">
+//                 </label>
+//               </form>
+//               <ol class = 'dragcontainer' id="glist"></ol>
+//             </div>
+//             <footer>
+//               <i class="fas fa-bars grey normalbutton"></i>
+//               <i class="fas fa-chevron-right grey normalbutton" id="gFlip"></i>
+//               <i class="fas fa-trash grey trashbutton" title="Drag an item here to delete"></i>
+//             </footer>
+//           </div>
+//           <div class="cardcard achi">
+//             <div class="date">
+//               <h4 id="adate"></h4>
+//             </div>
+//             <div class="main">
+//               <form onsubmit="return false">
+//                 <label>
+//                   <input id="anew" type="text" name="input" placeholder=" Chores">
+//                 </label>
+//               </form>
+//               <ol class = 'dragcontainer' id="alist"></ol>
+//             </div>
+//             <footer>
+//             <i class="fas fa-bars grey normalbutton"></i>
+//             <i class="fas fa-chevron-left grey normalbutton" id="aFlip"></i>
+//             <i class="fas fa-trash grey trashbutton" title="Drag an item here to delete"></i>
+//           </footer>
+//           </div>
+//         </div>
+//       </div>
+//       <i class="fas mid fa-caret-right dbutton"></i>
+//   `;
+//   let fragment = new DocumentFragment();
+//   fragment.appendChild(section);
+//   const scriptTag = document.getElementsByTagName('script')[0];
+//   document.body.insertBefore(fragment, scriptTag);
+//   callback();
+// }
+
+function deleteCard(){
+  const cardToClose = document.getElementById('out');
+  cardToClose.classList.toggle('invisible');
+}
+
+function prepCardContents(idDate, callback = print) {
+  setDisplayDate(idDate);
   if (!dc.dayCards) {
     initCards();
     initCard(idDate);
@@ -83,7 +155,11 @@ function prepCardContents(idDate, afterLoad) {
       renderEntry(idDate, j, 'chores');
     }
   }
-  afterLoad(idDate);
+  callback();
+}
+
+function print(){
+  console.log('not using callback');
 }
 
 function initCards() {
@@ -118,12 +194,44 @@ function renderEntry(idDate, i, type) {
   }
 }
 
-function prepCardEventListeners(idDate) {
+function prepCardEventListeners() {
   setFlipButtons();
-  setInputField(idDate);
-  setTrashZone(idDate);
-  setDragSort(idDate, 'glist');
-  // When click previous/next day button
+  setInputField();
+  setTrashZone();
+  setDragSort();
+  setLoadDayButtons();
+}
+
+function setLoadDayButtons() {
+  document.getElementById('next').addEventListener('click', e => {
+    const idDate = document.getElementById('gdate').textContent;
+    const nextID = getNextDId(idDate);
+    console.log('Next Day:' + nextID);
+    clearContents();
+    prepCardContents(nextID);
+  })
+
+  document.getElementById('previous').addEventListener('click', e => {
+    const idDate = document.getElementById('gdate').textContent;
+    const preID = getPreID(idDate);
+    console.log('Previous Day:' + preID);
+    clearContents();
+    prepCardContents(preID);
+  })
+}
+
+function clearContents(){
+  let dateBlanks = document.querySelectorAll('h4');
+  for (let blank of dateBlanks) {
+    blank.textContent = '';
+  };
+  let lists = document.querySelectorAll('ol');
+  console.log("dragcontainers :" + lists)
+  for (let i=0; i<lists.length; i++) {
+    while (lists[i].firstChild) {
+      lists[i].removeChild(lists[i].firstChild);
+    }
+  }
 }
 
 function getMouseY(evt) {
@@ -137,7 +245,7 @@ function getVerticalCenter(el) {
   return (rect.bottom - rect.top) /2;
 }
 
-function setDragSort(idDate) {
+function setDragSort() {
   let containers = document.querySelectorAll('.dragcontainer');
   for (let container of containers) {
     let dragEl, targetIndex;
@@ -147,6 +255,7 @@ function setDragSort(idDate) {
       e.dataTransfer.effectAllowed = 'move';
       
       let target = e.target; // to be dragovered's event target
+      // target.classList.toggle('red');
       if (target && target !== dragEl && target.nodeName == 'LI'){
         const mouseY = getMouseY(e);
         const targetY = getVerticalCenter(target);
@@ -165,6 +274,7 @@ function setDragSort(idDate) {
     
     function onDrop(e) {
       e.preventDefault();
+      const idDate = document.getElementById('gdate').textContent;
       const droppedData = JSON.parse(e.dataTransfer.getData('text/plain'));
       const type = droppedData.type;
       let dragIndex = droppedData.indexKey;
@@ -180,17 +290,6 @@ function setDragSort(idDate) {
       container.removeEventListener('dragover', onDragOver, false);
       container.removeEventListener('dragend', onDragEnd, false);
       container.removeEventListener('drop', onDrop, false);
-    }
-
-
-    function swapArrayEl (arr, dIndex, sIndex) {
-      let x = arr[dIndex];
-      arr[dIndex] = arr[sIndex];
-      arr[sIndex] = x;
-    }
-
-    function getListID(isGoals) {
-      return (isGoals ? document.getElementById('glist'): document.getElementById('alist'));
     }
   
     container.addEventListener('dragstart', e => {
@@ -213,7 +312,7 @@ function setDragSort(idDate) {
   }
 }
 
-function setTrashZone(idDate){
+function setTrashZone(){
   const trashZones = document.querySelectorAll('.trashbutton');
   for (const trashZone of trashZones) {
     trashZone.addEventListener('dragenter', e => {
@@ -228,6 +327,7 @@ function setTrashZone(idDate){
     });
     trashZone.addEventListener('drop', e => {
       e.preventDefault();
+      const idDate = document.getElementById('gdate').textContent;
       console.log('trash drop e.target: ' + e.target.nodeName);
       const droppedData = JSON.parse(e.dataTransfer.getData('text/plain'));
       const type = droppedData.type;
@@ -252,13 +352,13 @@ function setFlipButtons() {
   });
 }
 
-function setInputField(idDate) {
+function setInputField() {
   const gInput = document.getElementById('gnew');
   document.getElementById('gnew').addEventListener('change', e => {
-    inputHandler(gInput, idDate, true)});
+    inputHandler(gInput, true)});
   const aInput = document.getElementById('anew');
   document.getElementById('anew').addEventListener('change', e => {
-    inputHandler(aInput, idDate, false)});
+    inputHandler(aInput, false)});
 }
 
 function addEntryDoubleClickListener(entryElement, entry) {
@@ -277,7 +377,8 @@ function addEntryMousedownListener(entryElement) {
   });
 }
     
-function inputHandler(input, idDate, isGoal) {
+function inputHandler(input, isGoal) {
+  const idDate = document.getElementById('gdate').textContent;
   if (isGoal) {
     let goals = dc.dayCards[idDate]['goals'];
     goals.push(new Entry(input.value));

@@ -121,6 +121,19 @@ footer {
   /* font-size: 16px; */
 }
 
+.underconstruction {
+  display: inline-block;
+  text-align: center;
+  width: 17px;
+  height: 17px;
+  line-height: 17px;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 50%;
+  transition: .1s;
+  /* font-size: 16px; */
+}
+
 .trashbutton {
   display: inline-block;
   text-align: center;
@@ -258,6 +271,19 @@ ol {
 
 .dragcontainer {
 
+}
+
+.dbutton{
+  transition: .1s;
+}
+
+.dbutton:hover {
+  cursor: pointer;
+  color: khaki;
+}
+
+.red {
+  background-color:pink;
 }
 
 /* @media only screen and (min-width: 400px) {
