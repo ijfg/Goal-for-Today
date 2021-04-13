@@ -1,3 +1,24 @@
+addLoadEvent(onStartUp);
+
+function addLoadEvent(func){
+  const oldonload = window.onload;
+  if (typeof window.onload != "function") {
+    window.onload = func;
+  } else {
+    window.onload = () => {
+      oldonload();
+      func();
+    };
+  };
+};
+
+function onStartUp(){
+  const idToday = dateToID(new Date());
+  prepCard(idToday);
+};
+
+// Classes
+
 function Entry (text) {
   this.text = text;
   this.isDone = false;
@@ -22,125 +43,18 @@ function DraggedData (id, index) {
   this.type = id.split('_')[1];
 };
 
-function addLoadEvent(func){
-  const oldonload = window.onload;
-  if (typeof window.onload != "function") {
-    window.onload = func;
-  } else {
-    window.onload = () => {
-      oldonload();
-      func();
-    };
-  };
-};
-
-function turnToId (d) {
-  let month = d.getMonth() + 1;
-  if (month < 10) {
-    month = '0' + month;
-  }
-  let date = d.getDate();
-  if (date < 10) {
-    date = '0' + date;
-  }
-  const idDate = d.getFullYear().toString() + "-" + month.toString() + "-" +  date.toString();
-  return idDate;
-}
-
-function getNextDId(idDate) {
-  let dataDate = idDate.split('-');
-  let nextDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
-  nextDate = new Date(nextDate.setDate(nextDate.getDate() + 1));
-  const nextDId = turnToId(nextDate);
-  return nextDId;
-}
-
-function getPreID(idDate) {
-  let dataDate = idDate.split('-');
-  let preDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
-  preDate = new Date(preDate.setDate(preDate.getDate() - 1));
-  const preDId = turnToId(preDate);
-  return preDId;
-}
-
-function onStartUp(){
-  let d = new Date();
-  const idToday = turnToId(d);
-  prepCard(idToday);
-};
-
-function setDisplayDate(idDate) {
-  const dateBlanks = document.querySelectorAll('h4');
-  for (const blank of dateBlanks) {
-    blank.textContent = idDate;
-  }
-}
+// Card
 
 function prepCard(idDate) {
   prepCardContents(idDate, prepCardEventListeners);
 };
-
-// function prepCardStructure(callback) {
-//   const section = document.createElement('section');
-//   section.setAttribute('class', 'outter');
-//   section.setAttribute('id', 'out');
-//   section.innerHTML = `
-//   <i class="fas mid fa-caret-left dbutton"></i>
-//       <div class="container" id="sec">
-//         <div class="card">
-//           <div class="cardcard goal">
-//             <div class="date">
-//               <h4 id="gdate"></h4>
-//             </div>
-//             <div class="main">
-//               <form onsubmit="return false">
-//                 <label>
-//                   <input id="gnew" type="text" name="input" placeholder=" Goals">
-//                 </label>
-//               </form>
-//               <ol class = 'dragcontainer' id="glist"></ol>
-//             </div>
-//             <footer>
-//               <i class="fas fa-bars grey normalbutton"></i>
-//               <i class="fas fa-chevron-right grey normalbutton" id="gFlip"></i>
-//               <i class="fas fa-trash grey trashbutton" title="Drag an item here to delete"></i>
-//             </footer>
-//           </div>
-//           <div class="cardcard achi">
-//             <div class="date">
-//               <h4 id="adate"></h4>
-//             </div>
-//             <div class="main">
-//               <form onsubmit="return false">
-//                 <label>
-//                   <input id="anew" type="text" name="input" placeholder=" Chores">
-//                 </label>
-//               </form>
-//               <ol class = 'dragcontainer' id="alist"></ol>
-//             </div>
-//             <footer>
-//             <i class="fas fa-bars grey normalbutton"></i>
-//             <i class="fas fa-chevron-left grey normalbutton" id="aFlip"></i>
-//             <i class="fas fa-trash grey trashbutton" title="Drag an item here to delete"></i>
-//           </footer>
-//           </div>
-//         </div>
-//       </div>
-//       <i class="fas mid fa-caret-right dbutton"></i>
-//   `;
-//   let fragment = new DocumentFragment();
-//   fragment.appendChild(section);
-//   const scriptTag = document.getElementsByTagName('script')[0];
-//   document.body.insertBefore(fragment, scriptTag);
-//   callback();
-// }
 
 function deleteCard(){
   const cardToClose = document.getElementById('out');
   cardToClose.classList.toggle('invisible');
 }
 
-function prepCardContents(idDate, callback = print) {
+function prepCardContents(idDate, callback = doNothing) {
   setDisplayDate(idDate);
   if (!dc.dayCards) {
     initCards();
@@ -156,10 +70,6 @@ function prepCardContents(idDate, callback = print) {
     }
   }
   callback();
-}
-
-function print(){
-  console.log('not using callback');
 }
 
 function initCards() {
@@ -194,6 +104,8 @@ function renderEntry(idDate, i, type) {
   }
 }
 
+// Event Listeners
+
 function prepCardEventListeners() {
   setFlipButtons();
   setInputField();
@@ -218,31 +130,6 @@ function setLoadDayButtons() {
     clearContents();
     prepCardContents(preID);
   })
-}
-
-function clearContents(){
-  let dateBlanks = document.querySelectorAll('h4');
-  for (let blank of dateBlanks) {
-    blank.textContent = '';
-  };
-  let lists = document.querySelectorAll('ol');
-  console.log("dragcontainers :" + lists)
-  for (let i=0; i<lists.length; i++) {
-    while (lists[i].firstChild) {
-      lists[i].removeChild(lists[i].firstChild);
-    }
-  }
-}
-
-function getMouseY(evt) {
-  const targetRect = evt.target.getBoundingClientRect();
-  const offset = evt.pageY - targetRect.top;
-  return offset;
-}
-
-function getVerticalCenter(el) {
-  const rect = el.getBoundingClientRect();
-  return (rect.bottom - rect.top) /2;
 }
 
 function setDragSort() {
@@ -376,7 +263,11 @@ function addEntryMousedownListener(entryElement) {
     };
   });
 }
-    
+
+// Functions
+
+function doNothing(){}
+
 function inputHandler(input, isGoal) {
   const idDate = document.getElementById('gdate').textContent;
   if (isGoal) {
@@ -392,17 +283,63 @@ function inputHandler(input, isGoal) {
   }
 };
 
-addLoadEvent(onStartUp);
+function clearContents(){
+  let dateBlanks = document.querySelectorAll('h4');
+  for (let blank of dateBlanks) {
+    blank.textContent = '';
+  };
+  let lists = document.querySelectorAll('ol');
+  console.log("dragcontainers :" + lists)
+  for (let i=0; i<lists.length; i++) {
+    while (lists[i].firstChild) {
+      lists[i].removeChild(lists[i].firstChild);
+    }
+  }
+}
 
-// When user click previous day button
+function getMouseY(evt) {
+  const targetRect = evt.target.getBoundingClientRect();
+  const offset = evt.pageY - targetRect.top;
+  return offset;
+}
 
-// When user click next day button
+function getVerticalCenter(el) {
+  const rect = el.getBoundingClientRect();
+  return (rect.bottom - rect.top) /2;
+}
 
-// When user delete an entry (mobile)
+function dateToID (d) {
+  let month = d.getMonth() + 1;
+  if (month < 10) {
+    month = '0' + month;
+  }
+  let date = d.getDate();
+  if (date < 10) {
+    date = '0' + date;
+  }
+  const idDate = d.getFullYear().toString() + "-" + month.toString() + "-" +  date.toString();
+  return idDate;
+}
 
-// When user drag an entry
+function getNextDId(idDate) {
+  let dataDate = idDate.split('-');
+  let nextDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
+  nextDate = new Date(nextDate.setDate(nextDate.getDate() + 1));
+  const nextDId = dateToID(nextDate);
+  return nextDId;
+}
 
-// When user edit an entry
+function getPreID(idDate) {
+  let dataDate = idDate.split('-');
+  let preDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
+  preDate = new Date(preDate.setDate(preDate.getDate() - 1));
+  const preDId = dateToID(preDate);
+  return preDId;
+}
 
-// When user call the weekly goal 
-
+function setDisplayDate(idDate) {
+  const dateBlanks = document.querySelectorAll('h4');
+  for (const blank of dateBlanks) {
+    blank.textContent = idDate;
+  }
+}
