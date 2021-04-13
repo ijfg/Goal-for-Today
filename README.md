@@ -1,0 +1,1 @@
+A productivity tool inspired by Marc Andreessen's post [Pmarca Guide to Personal Productivity](https://pmarchive.com/guide_to_personal_productivity.html). Just write done your daily goals and achivements.
