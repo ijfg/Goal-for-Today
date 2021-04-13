@@ -1,4 +1,3 @@
-
 // function prepCardStructure(callback) {
 //   const section = document.createElement('section');
 //   section.setAttribute('class', 'outter');
@@ -53,3 +52,15 @@
 //   document.body.insertBefore(fragment, scriptTag);
 //   callback();
 // }
+
+// When user click previous day button
+
+// When user click next day button
+
+// When user delete an entry (mobile)
+
+// When user drag an entry
+
+// When user edit an entry
+
+// When user call the weekly goal 

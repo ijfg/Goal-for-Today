@@ -17,6 +17,8 @@ function onStartUp(){
   prepCard(idToday);
 };
 
+// Classes
+
 function Entry (text) {
   this.text = text;
   this.isDone = false;
@@ -41,41 +43,7 @@ function DraggedData (id, index) {
   this.type = id.split('_')[1];
 };
 
-function dateToID (d) {
-  let month = d.getMonth() + 1;
-  if (month < 10) {
-    month = '0' + month;
-  }
-  let date = d.getDate();
-  if (date < 10) {
-    date = '0' + date;
-  }
-  const idDate = d.getFullYear().toString() + "-" + month.toString() + "-" +  date.toString();
-  return idDate;
-}
-
-function getNextDId(idDate) {
-  let dataDate = idDate.split('-');
-  let nextDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
-  nextDate = new Date(nextDate.setDate(nextDate.getDate() + 1));
-  const nextDId = dateToID(nextDate);
-  return nextDId;
-}
-
-function getPreID(idDate) {
-  let dataDate = idDate.split('-');
-  let preDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
-  preDate = new Date(preDate.setDate(preDate.getDate() - 1));
-  const preDId = dateToID(preDate);
-  return preDId;
-}
-
-function setDisplayDate(idDate) {
-  const dateBlanks = document.querySelectorAll('h4');
-  for (const blank of dateBlanks) {
-    blank.textContent = idDate;
-  }
-}
+// Card
 
 function prepCard(idDate) {
   prepCardContents(idDate, prepCardEventListeners);
@@ -86,7 +54,7 @@ function deleteCard(){
   cardToClose.classList.toggle('invisible');
 }
 
-function prepCardContents(idDate, callback = print) {
+function prepCardContents(idDate, callback = doNothing) {
   setDisplayDate(idDate);
   if (!dc.dayCards) {
     initCards();
@@ -102,10 +70,6 @@ function prepCardContents(idDate, callback = print) {
     }
   }
   callback();
-}
-
-function print(){
-  console.log('not using callback');
 }
 
 function initCards() {
@@ -140,6 +104,8 @@ function renderEntry(idDate, i, type) {
   }
 }
 
+// Event Listeners
+
 function prepCardEventListeners() {
   setFlipButtons();
   setInputField();
@@ -164,31 +130,6 @@ function setLoadDayButtons() {
     clearContents();
     prepCardContents(preID);
   })
-}
-
-function clearContents(){
-  let dateBlanks = document.querySelectorAll('h4');
-  for (let blank of dateBlanks) {
-    blank.textContent = '';
-  };
-  let lists = document.querySelectorAll('ol');
-  console.log("dragcontainers :" + lists)
-  for (let i=0; i<lists.length; i++) {
-    while (lists[i].firstChild) {
-      lists[i].removeChild(lists[i].firstChild);
-    }
-  }
-}
-
-function getMouseY(evt) {
-  const targetRect = evt.target.getBoundingClientRect();
-  const offset = evt.pageY - targetRect.top;
-  return offset;
-}
-
-function getVerticalCenter(el) {
-  const rect = el.getBoundingClientRect();
-  return (rect.bottom - rect.top) /2;
 }
 
 function setDragSort() {
@@ -322,7 +263,11 @@ function addEntryMousedownListener(entryElement) {
     };
   });
 }
-    
+
+// Functions
+
+function doNothing(){}
+
 function inputHandler(input, isGoal) {
   const idDate = document.getElementById('gdate').textContent;
   if (isGoal) {
@@ -338,15 +283,63 @@ function inputHandler(input, isGoal) {
   }
 };
 
-// When user click previous day button
+function clearContents(){
+  let dateBlanks = document.querySelectorAll('h4');
+  for (let blank of dateBlanks) {
+    blank.textContent = '';
+  };
+  let lists = document.querySelectorAll('ol');
+  console.log("dragcontainers :" + lists)
+  for (let i=0; i<lists.length; i++) {
+    while (lists[i].firstChild) {
+      lists[i].removeChild(lists[i].firstChild);
+    }
+  }
+}
 
-// When user click next day button
+function getMouseY(evt) {
+  const targetRect = evt.target.getBoundingClientRect();
+  const offset = evt.pageY - targetRect.top;
+  return offset;
+}
 
-// When user delete an entry (mobile)
+function getVerticalCenter(el) {
+  const rect = el.getBoundingClientRect();
+  return (rect.bottom - rect.top) /2;
+}
 
-// When user drag an entry
+function dateToID (d) {
+  let month = d.getMonth() + 1;
+  if (month < 10) {
+    month = '0' + month;
+  }
+  let date = d.getDate();
+  if (date < 10) {
+    date = '0' + date;
+  }
+  const idDate = d.getFullYear().toString() + "-" + month.toString() + "-" +  date.toString();
+  return idDate;
+}
 
-// When user edit an entry
+function getNextDId(idDate) {
+  let dataDate = idDate.split('-');
+  let nextDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
+  nextDate = new Date(nextDate.setDate(nextDate.getDate() + 1));
+  const nextDId = dateToID(nextDate);
+  return nextDId;
+}
 
-// When user call the weekly goal 
+function getPreID(idDate) {
+  let dataDate = idDate.split('-');
+  let preDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
+  preDate = new Date(preDate.setDate(preDate.getDate() - 1));
+  const preDId = dateToID(preDate);
+  return preDId;
+}
 
+function setDisplayDate(idDate) {
+  const dateBlanks = document.querySelectorAll('h4');
+  for (const blank of dateBlanks) {
+    blank.textContent = idDate;
+  }
+}
