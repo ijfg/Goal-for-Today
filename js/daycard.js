@@ -1,3 +1,22 @@
+addLoadEvent(onStartUp);
+
+function addLoadEvent(func){
+  const oldonload = window.onload;
+  if (typeof window.onload != "function") {
+    window.onload = func;
+  } else {
+    window.onload = () => {
+      oldonload();
+      func();
+    };
+  };
+};
+
+function onStartUp(){
+  const idToday = dateToID(new Date());
+  prepCard(idToday);
+};
+
 function Entry (text) {
   this.text = text;
   this.isDone = false;
@@ -22,19 +41,7 @@ function DraggedData (id, index) {
   this.type = id.split('_')[1];
 };
 
-function addLoadEvent(func){
-  const oldonload = window.onload;
-  if (typeof window.onload != "function") {
-    window.onload = func;
-  } else {
-    window.onload = () => {
-      oldonload();
-      func();
-    };
-  };
-};
-
-function turnToId (d) {
+function dateToID (d) {
   let month = d.getMonth() + 1;
   if (month < 10) {
     month = '0' + month;
@@ -51,7 +58,7 @@ function getNextDId(idDate) {
   let dataDate = idDate.split('-');
   let nextDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
   nextDate = new Date(nextDate.setDate(nextDate.getDate() + 1));
-  const nextDId = turnToId(nextDate);
+  const nextDId = dateToID(nextDate);
   return nextDId;
 }
 
@@ -59,15 +66,9 @@ function getPreID(idDate) {
   let dataDate = idDate.split('-');
   let preDate = new Date(dataDate[0], dataDate[1] - 1, dataDate[2]);
   preDate = new Date(preDate.setDate(preDate.getDate() - 1));
-  const preDId = turnToId(preDate);
+  const preDId = dateToID(preDate);
   return preDId;
 }
-
-function onStartUp(){
-  let d = new Date();
-  const idToday = turnToId(d);
-  prepCard(idToday);
-};
 
 function setDisplayDate(idDate) {
   const dateBlanks = document.querySelectorAll('h4');
@@ -336,8 +337,6 @@ function inputHandler(input, isGoal) {
     renderEntry(idDate, chores.length - 1, 'chores');
   }
 };
-
-addLoadEvent(onStartUp);
 
 // When user click previous day button
 
